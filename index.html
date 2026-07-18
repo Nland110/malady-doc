@@ -1,0 +1,990 @@
+﻿<title>MALADY Item Web</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+  :root {
+    --bg: #EFF1EA; --panel: #E6E9DE; --panel2: #DDE1D2;
+    --ink: #242A20; --ink-soft: #5A6152; --ink-faint: #8A9180;
+    --accent: #55712E; --accent-ink: #F2F5EA;
+    --line: #C9CEBB; --link: #4A6528;
+    --warn: #96382E; --warn-bg: #EAD9D4;
+    --live: #2E6047; --live-bg: #D6E4DA;
+    --edit: #8A6A1F; --edit-bg: #EEE4C8;
+    --t0: #8A9180; --t1: #9A6B3F; --t2: #5B7186; --t3: #77862F;
+    --card: #F6F7F1; --shadow: 0 1px 2px rgba(30,40,20,.10);
+  }
+  @media (prefers-color-scheme: dark) { :root {
+    --bg: #171B16; --panel: #1E241C; --panel2: #242B21;
+    --ink: #D9DECD; --ink-soft: #9BA38E; --ink-faint: #6E7663;
+    --accent: #9AB86A; --accent-ink: #1A2112;
+    --line: #333B2E; --link: #A7C47B;
+    --warn: #D08A7E; --warn-bg: #3A2723;
+    --live: #8FC0A5; --live-bg: #223A2D;
+    --edit: #D4B565; --edit-bg: #3A3120;
+    --t0: #7C8A6E; --t1: #C09468; --t2: #8FA6BC; --t3: #B0C05C;
+    --card: #20261D; --shadow: 0 1px 3px rgba(0,0,0,.35);
+  } }
+  :root[data-theme="dark"] {
+    --bg: #171B16; --panel: #1E241C; --panel2: #242B21;
+    --ink: #D9DECD; --ink-soft: #9BA38E; --ink-faint: #6E7663;
+    --accent: #9AB86A; --accent-ink: #1A2112;
+    --line: #333B2E; --link: #A7C47B;
+    --warn: #D08A7E; --warn-bg: #3A2723;
+    --live: #8FC0A5; --live-bg: #223A2D;
+    --edit: #D4B565; --edit-bg: #3A3120;
+    --t0: #7C8A6E; --t1: #C09468; --t2: #8FA6BC; --t3: #B0C05C;
+    --card: #20261D; --shadow: 0 1px 3px rgba(0,0,0,.35);
+  }
+  :root[data-theme="light"] {
+    --bg: #EFF1EA; --panel: #E6E9DE; --panel2: #DDE1D2;
+    --ink: #242A20; --ink-soft: #5A6152; --ink-faint: #8A9180;
+    --accent: #55712E; --accent-ink: #F2F5EA;
+    --line: #C9CEBB; --link: #4A6528;
+    --warn: #96382E; --warn-bg: #EAD9D4;
+    --live: #2E6047; --live-bg: #D6E4DA;
+    --edit: #8A6A1F; --edit-bg: #EEE4C8;
+    --t0: #8A9180; --t1: #9A6B3F; --t2: #5B7186; --t3: #77862F;
+    --card: #F6F7F1; --shadow: 0 1px 2px rgba(30,40,20,.10);
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font: 15px/1.55 "Segoe UI", system-ui, sans-serif;
+    display: flex; flex-direction: column;
+  }
+  a { color: var(--link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  code, .id { font-family: Consolas, "Courier New", monospace; font-size: .85em; color: var(--ink-soft); }
+
+  header {
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    padding: 12px 20px; border-bottom: 1px solid var(--line); background: var(--panel);
+  }
+  header h1 {
+    margin: 0; font-family: Georgia, "Palatino Linotype", serif;
+    font-size: 21px; font-weight: 700; letter-spacing: .04em;
+  }
+  header h1 a { color: var(--ink); }
+  header h1 .malady { color: var(--accent); text-transform: uppercase; }
+  .tagline { color: var(--ink-soft); font-size: 13px; }
+  .headright { margin-left: auto; display: flex; gap: 8px; align-items: center; color: var(--ink-faint); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+
+  .btn {
+    display: inline-block; cursor: pointer; border: 1px solid var(--line);
+    background: var(--card); color: var(--ink); border-radius: 4px;
+    font: inherit; font-size: 13px; padding: 4px 12px;
+  }
+  .btn:hover { border-color: var(--accent); }
+  .btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 600; }
+  .btn.danger { color: var(--warn); }
+  .btn.mini { font-size: 12px; padding: 2px 9px; }
+
+  .frame { display: flex; flex: 1; min-height: 0; }
+  nav {
+    width: 265px; flex: none; border-right: 1px solid var(--line);
+    background: var(--panel); overflow-y: auto; padding: 12px;
+  }
+  main { flex: 1; overflow-y: auto; padding: 22px 28px 60px; }
+  .inner { max-width: 880px; }
+
+  #search {
+    width: 100%; padding: 7px 10px; margin-bottom: 12px;
+    border: 1px solid var(--line); border-radius: 4px;
+    background: var(--card); color: var(--ink); font: inherit; font-size: 14px;
+  }
+  .navgroup { margin-bottom: 4px; }
+  .navgroup > button {
+    all: unset; cursor: pointer; display: flex; width: 100%; align-items: center;
+    padding: 5px 6px; border-radius: 4px; font-size: 13px; font-weight: 600;
+    letter-spacing: .06em; text-transform: uppercase; color: var(--ink-soft);
+  }
+  .navgroup > button:hover { background: var(--panel2); }
+  .navgroup .n { margin-left: auto; color: var(--ink-faint); font-weight: 400; font-variant-numeric: tabular-nums; }
+  .navlist { list-style: none; margin: 0 0 6px; padding: 0 0 0 8px; }
+  .navlist a {
+    display: flex; gap: 6px; align-items: baseline; padding: 2.5px 6px;
+    border-radius: 4px; color: var(--ink); font-size: 13.5px;
+  }
+  .navlist a:hover { background: var(--panel2); text-decoration: none; }
+  .navlist a.active { background: var(--accent); color: var(--accent-ink); }
+  .navlist .dotlive { width: 6px; height: 6px; border-radius: 50%; background: var(--live); flex: none; align-self: center; }
+
+  .crumb { font-size: 12.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 6px; }
+  h2.pagetitle {
+    margin: 0 0 2px; font-family: Georgia, "Palatino Linotype", serif;
+    font-size: 30px; font-weight: 700; text-wrap: balance;
+  }
+  .idline { margin-bottom: 14px; }
+  .badges { display: inline-flex; gap: 6px; margin-left: 10px; vertical-align: 3px; }
+  .chip {
+    display: inline-block; padding: 1px 8px; border-radius: 999px;
+    font-size: 11.5px; font-weight: 600; letter-spacing: .04em;
+    background: var(--panel2); color: var(--ink-soft); border: 1px solid var(--line);
+  }
+  .chip.live { background: var(--live-bg); color: var(--live); border-color: transparent; }
+  .chip.warn { background: var(--warn-bg); color: var(--warn); border-color: transparent; }
+  .chip.edited { background: var(--edit-bg); color: var(--edit); border-color: transparent; }
+  .chip.t0 { color: var(--t0); } .chip.t1 { color: var(--t1); }
+  .chip.t2 { color: var(--t2); } .chip.t3 { color: var(--t3); }
+
+  .statgrid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+    gap: 8px; margin: 14px 0 4px;
+  }
+  .stat {
+    background: var(--card); border: 1px solid var(--line); border-radius: 5px;
+    padding: 7px 10px; box-shadow: var(--shadow);
+  }
+  .stat .k { font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-faint); }
+  .stat .v { font-size: 17px; font-variant-numeric: tabular-nums; }
+  .stat .v small { font-size: 12px; color: var(--ink-soft); }
+  .notes { color: var(--ink-soft); font-style: italic; margin: 10px 0 0; max-width: 65ch; }
+  .assetline { margin: 12px 0 0; font-size: 13.5px; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+  .assetline .k { font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-faint); }
+  .assetline a { word-break: break-all; }
+  .assetline .none { color: var(--ink-faint); font-style: italic; }
+
+  /* Inline-editable item properties (the profile IS the editor) */
+  .props { margin: 14px 0 4px; }
+  .propgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; }
+  .pfield { display: flex; flex-direction: column; gap: 3px; }
+  .pfield.wide { grid-column: 1 / -1; }
+  .pfield > span { font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-faint); }
+  .pfield input {
+    width: 100%; padding: 6px 9px; border: 1px solid var(--line); border-radius: 5px;
+    background: var(--card); color: var(--ink); font: inherit; font-size: 15px;
+    font-variant-numeric: tabular-nums; box-shadow: var(--shadow);
+  }
+  .pfield input:hover { border-color: var(--ink-faint); }
+  .pfield input:focus { border-color: var(--accent); }
+  .props .assetopen { margin-top: 6px; font-size: 13px; }
+  .savehint { color: var(--ink-faint); font-size: 11.5px; font-style: italic; margin-top: 8px; }
+
+  /* Zombie idea board — freeform name + notes cards */
+  .navspecial {
+    display: flex; align-items: center; padding: 6px 6px; margin-top: 2px;
+    border-radius: 4px; font-size: 13px; font-weight: 600; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--accent); border-top: 1px solid var(--line);
+  }
+  .navspecial:hover { background: var(--panel2); text-decoration: none; }
+  .navspecial .n { margin-left: auto; color: var(--ink-faint); font-weight: 400; font-variant-numeric: tabular-nums; }
+  .ideacard {
+    background: var(--card); border: 1px solid var(--line); border-radius: 6px;
+    padding: 12px 14px; margin-bottom: 10px; box-shadow: var(--shadow);
+  }
+  .idearow { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; }
+  .ideaname, .ideanotes {
+    padding: 8px 10px; border: 1px solid var(--line); border-radius: 5px;
+    background: var(--bg); color: var(--ink); font: inherit;
+  }
+  .ideaname { flex: 1; min-width: 0; font-size: 16px; font-weight: 600; }
+  .ideanotes { width: 100%; font-size: 15px; line-height: 1.5; resize: vertical; }
+  .ideaname:focus, .ideanotes:focus { border-color: var(--accent); outline: none; }
+
+  section.linkblock { margin-top: 26px; }
+  section.linkblock > h3 {
+    display: flex; align-items: baseline; gap: 10px;
+    margin: 0 0 8px; font-size: 13px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--ink-soft); border-bottom: 1px solid var(--line); padding-bottom: 4px;
+  }
+  section.linkblock > h3 .grow { flex: 1; }
+  .autonote { font-size: 11.5px; letter-spacing: 0; text-transform: none; color: var(--ink-faint); font-weight: 400; }
+  .empty { color: var(--ink-faint); font-size: 13.5px; font-style: italic; }
+
+  .rcard {
+    background: var(--card); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+    border-radius: 5px; padding: 10px 14px; margin-bottom: 8px; box-shadow: var(--shadow);
+  }
+  .rcard .rhead { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+  .rcard .rname { font-weight: 600; }
+  .rcard .meta { color: var(--ink-faint); font-size: 12.5px; }
+  .rcard .rhead .btn { margin-left: auto; }
+  .rcard table.rin { border-collapse: collapse; margin-top: 6px; font-size: 14px; }
+  .rcard table.rin td { padding: 2px 14px 2px 0; }
+  .rcard table.rin td.q { text-align: right; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .rcard .rout { margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--line); font-size: 14px; }
+  .qty { color: var(--ink-faint); font-size: 12px; font-variant-numeric: tabular-nums; }
+  .missing { color: var(--warn); border-bottom: 1px dotted var(--warn); cursor: help; }
+
+  table.list { border-collapse: collapse; width: 100%; font-size: 14px; }
+  .tablewrap { overflow-x: auto; }
+  table.list th {
+    text-align: left; font-size: 11.5px; letter-spacing: .07em; text-transform: uppercase;
+    color: var(--ink-faint); font-weight: 600; padding: 6px 10px 4px; border-bottom: 1px solid var(--line);
+  }
+  table.list td { padding: 5px 10px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+  table.list tr:hover td { background: var(--panel2); }
+  table.list td.num, table.list th.num { text-align: right; }
+
+  .homegrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; margin-top: 16px; }
+  .homecard {
+    background: var(--card); border: 1px solid var(--line); border-radius: 5px;
+    padding: 12px 14px; box-shadow: var(--shadow); color: var(--ink); display: block;
+  }
+  .homecard:hover { border-color: var(--accent); text-decoration: none; }
+  .homecard .cn { font-family: Georgia, serif; font-size: 17px; }
+  .homecard .cd { color: var(--ink-faint); font-size: 12.5px; margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .lede { color: var(--ink-soft); max-width: 68ch; margin: 6px 0 0; }
+
+  .editform {
+    background: var(--card); border: 1px solid var(--edit); border-radius: 5px;
+    padding: 14px; margin-bottom: 10px; box-shadow: var(--shadow);
+  }
+  .formgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+  .field label { display: block; font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 2px; }
+  .field input, .field select {
+    width: 100%; padding: 5px 8px; border: 1px solid var(--line); border-radius: 4px;
+    background: var(--bg); color: var(--ink); font: inherit; font-size: 14px;
+  }
+  .field.wide { grid-column: 1 / -1; }
+  .ingrows { margin: 10px 0; display: flex; flex-direction: column; gap: 6px; }
+  .ingrow { display: flex; gap: 8px; align-items: center; }
+  .ingrow select, .ingrow input { padding: 4px 8px; border: 1px solid var(--line); border-radius: 4px; background: var(--bg); color: var(--ink); font: inherit; font-size: 13.5px; }
+  .ingrow select { flex: 1; min-width: 0; }
+  .ingrow input.qtyin { width: 70px; }
+  .ingrow input.tblin { flex: 1; min-width: 0; }
+  .formactions { display: flex; gap: 8px; margin-top: 12px; }
+  .formactions .danger { margin-left: auto; }
+  .formtitle { font-weight: 600; margin-bottom: 10px; color: var(--edit); }
+
+  .navtoggle { display: none; }
+  @media (max-width: 720px) {
+    /* Phone layout = ONE natural page scroll. The desktop app-shell (fixed
+       height, independently-scrolling panes) nests a scroll inside the
+       artifact viewer's own scroll — that was the stacked-scroll feel. Here
+       we release the fixed height and let the document flow, so there's a
+       single scrollbar. Items list and content behave like two tabs: exactly
+       one is in the flow at a time (toggled by ☰ Items / ✕ Close). */
+    html, body { height: auto; }
+    body { display: block; }
+    .frame { display: block; }
+    header { position: sticky; top: 0; z-index: 30; padding: 10px 14px; gap: 6px 12px; }
+    nav { width: 100%; max-height: none; overflow: visible; border-right: none; border-bottom: none; padding: 10px 14px; }
+    main { overflow: visible; padding: 16px 14px 72px; }
+    body:not(.nav-open) nav { display: none; }
+    body.nav-open main { display: none; }
+    .navtoggle { display: inline-block; order: -1; }
+    header h1 { font-size: 19px; }
+    .headright { width: 100%; margin-left: 0; }
+    .pagetitle { font-size: 25px; }
+    /* iOS Safari auto-zooms any focused input under 16px — pin every field to 16px */
+    #search, .pfield input, .field input, .field select,
+    .ingrow select, .ingrow input, .editform input, .editform select, .ideanotes { font-size: 16px; }
+    /* editor rows: stack instead of overflowing a ~360px content column */
+    .ingrow { flex-wrap: wrap; }
+    .ingrow select, .ingrow input.tblin { flex: 1 1 100%; }
+    .ingrow input.qtyin { flex: 1 1 64px; }
+    /* finger-sized tap targets */
+    .btn { padding: 9px 15px; }
+    .btn.mini { padding: 7px 13px; font-size: 13px; }
+    .navlist a { padding: 7px 6px; } /* easier to hit while scrolling the list */
+    .propgrid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .inner { animation: fadein .15s ease-out; }
+    @keyframes fadein { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; } }
+  }
+</style>
+
+<header>
+  <button class="btn navtoggle" id="navtoggle" aria-expanded="false">☰ Items</button>
+  <h1><a href="#home"><span class="malady">Malady</span> — Item Web</a></h1>
+  <span class="tagline">Malady Master Doc</span>
+  <div class="headright">
+    <span id="counts"></span>
+    <span class="chip edited" id="editchip" hidden></span>
+    <button class="btn mini" id="exportbtn" hidden>Export changes</button>
+    <button class="btn mini danger" id="discardbtn" hidden>Discard</button>
+  </div>
+</header>
+<div class="frame">
+  <nav>
+    <input id="search" type="search" placeholder="Search items, ids, recipes…" aria-label="Search items">
+    <div id="navtree"></div>
+  </nav>
+  <main><div class="inner" id="page"></div></main>
+</div>
+
+<script>
+const DATA = {"items":[{"id":"campfire","name":"Campfire","cat":"workstation","tier":0,"stack":1,"weight":8,"scrap":1,"food":0,"water":0,"health":0,"live":true,"notes":"LIVE as placeable station - cooking + glow","asset":"","scrapYield":[]},{"id":"workbench","name":"Workbench","cat":"workstation","tier":1,"stack":1,"weight":15,"scrap":2,"food":0,"water":0,"health":0,"live":true,"notes":"LIVE as placeable station - general crafting","asset":"","scrapYield":[]},{"id":"forge","name":"Forge","cat":"workstation","tier":1,"stack":1,"weight":30,"scrap":3,"food":0,"water":0,"health":0,"live":false,"notes":"smelting + metalwork","asset":"","scrapYield":[]},{"id":"tanning_rack","name":"Tanning Rack","cat":"workstation","tier":1,"stack":1,"weight":10,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"hides to leather","asset":"","scrapYield":[]},{"id":"apothecary_table","name":"Apothecary Table","cat":"workstation","tier":2,"stack":1,"weight":12,"scrap":2,"food":0,"water":0,"health":0,"live":false,"notes":"medicine crafting","asset":"","scrapYield":[]},{"id":"resource_dirt","name":"Dirt","cat":"resource","tier":0,"stack":500,"weight":0.5,"scrap":0,"food":0,"water":0,"health":0,"live":true,"notes":"","asset":"","scrapYield":[]},{"id":"resource_wood","name":"Wood","cat":"resource","tier":0,"stack":500,"weight":1,"scrap":1,"food":0,"water":0,"health":0,"live":true,"notes":"","asset":"","scrapYield":[]},{"id":"resource_stone","name":"Stone","cat":"resource","tier":0,"stack":500,"weight":1.5,"scrap":1,"food":0,"water":0,"health":0,"live":true,"notes":"","asset":"","scrapYield":[]},{"id":"resource_fiber","name":"Fiber","cat":"resource","tier":0,"stack":500,"weight":0.1,"scrap":0,"food":0,"water":0,"health":0,"live":true,"notes":"","asset":"","scrapYield":[]},{"id":"resource_iron_ore","name":"Iron Ore","cat":"resource","tier":1,"stack":300,"weight":2,"scrap":2,"food":0,"water":0,"health":0,"live":true,"notes":"","asset":"","scrapYield":[]},{"id":"resource_coal","name":"Coal","cat":"resource","tier":1,"stack":300,"weight":1,"scrap":1,"food":0,"water":0,"health":0,"live":true,"notes":"","asset":"","scrapYield":[]},{"id":"resource_saltpeter","name":"Saltpeter","cat":"resource","tier":2,"stack":300,"weight":1,"scrap":2,"food":0,"water":0,"health":0,"live":true,"notes":"","asset":"","scrapYield":[]},{"id":"resource_copper_ore","name":"Copper Ore","cat":"resource","tier":1,"stack":300,"weight":2,"scrap":2,"food":0,"water":0,"health":0,"live":true,"notes":"","asset":"","scrapYield":[]},{"id":"resource_concrete","name":"Concrete Mix","cat":"resource","tier":2,"stack":500,"weight":2,"scrap":1,"food":0,"water":0,"health":0,"live":true,"notes":"","asset":"","scrapYield":[]},{"id":"resource_steel","name":"Steel","cat":"resource","tier":3,"stack":300,"weight":3,"scrap":3,"food":0,"water":0,"health":0,"live":true,"notes":"","asset":"","scrapYield":[]},{"id":"resource_feverfew","name":"Feverfew","cat":"resource","tier":0,"stack":100,"weight":0.1,"scrap":0,"food":0,"water":0,"health":0,"live":true,"notes":"medicinal herb","asset":"","scrapYield":[]},{"id":"resource_yarrow","name":"Yarrow","cat":"resource","tier":0,"stack":100,"weight":0.1,"scrap":0,"food":0,"water":0,"health":0,"live":true,"notes":"medicinal herb","asset":"","scrapYield":[]},{"id":"resource_clay","name":"Clay","cat":"resource","tier":0,"stack":500,"weight":1,"scrap":0,"food":0,"water":0,"health":0,"live":false,"notes":"riverbanks; forge liner + pottery","asset":"","scrapYield":[]},{"id":"resource_sand","name":"Sand","cat":"resource","tier":0,"stack":500,"weight":1,"scrap":0,"food":0,"water":0,"health":0,"live":false,"notes":"smelts to glass","asset":"","scrapYield":[]},{"id":"resource_glass","name":"Glass","cat":"resource","tier":1,"stack":200,"weight":0.8,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"windows + jars","asset":"","scrapYield":[]},{"id":"resource_cloth","name":"Cloth","cat":"resource","tier":0,"stack":300,"weight":0.2,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"scrapped clothing; bandages + padding","asset":"","scrapYield":[]},{"id":"resource_raw_hide","name":"Raw Hide","cat":"resource","tier":0,"stack":100,"weight":1.5,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"animal drop; tans to leather","asset":"","scrapYield":[]},{"id":"resource_leather","name":"Leather","cat":"resource","tier":1,"stack":200,"weight":1,"scrap":2,"food":0,"water":0,"health":0,"live":false,"notes":"tanned hide; armor + grips","asset":"","scrapYield":[]},{"id":"resource_bone","name":"Bone","cat":"resource","tier":0,"stack":200,"weight":0.8,"scrap":0,"food":0,"water":0,"health":0,"live":false,"notes":"animal/zombie drop; knives + glue","asset":"","scrapYield":[]},{"id":"resource_animal_fat","name":"Animal Fat","cat":"resource","tier":0,"stack":100,"weight":0.5,"scrap":0,"food":0,"water":0,"health":0,"live":false,"notes":"renders to tallow","asset":"","scrapYield":[]},{"id":"resource_tallow","name":"Tallow","cat":"resource","tier":1,"stack":100,"weight":0.5,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"candles + cooking + waterproofing","asset":"","scrapYield":[]},{"id":"resource_charcoal","name":"Charcoal","cat":"resource","tier":0,"stack":300,"weight":0.8,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"campfire byproduct; gunpowder + filters","asset":"","scrapYield":[]},{"id":"resource_resin","name":"Pine Resin","cat":"resource","tier":0,"stack":100,"weight":0.3,"scrap":0,"food":0,"water":0,"health":0,"live":false,"notes":"tapped from trees; glue + torches","asset":"","scrapYield":[]},{"id":"resource_rope","name":"Rope","cat":"resource","tier":1,"stack":100,"weight":0.5,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"fiber weave; traps + climbing later","asset":"","scrapYield":[]},{"id":"resource_sulfur","name":"Sulfur","cat":"resource","tier":2,"stack":300,"weight":1,"scrap":2,"food":0,"water":0,"health":0,"live":false,"notes":"gunpowder trio with saltpeter + charcoal","asset":"","scrapYield":[]},{"id":"resource_lead","name":"Lead","cat":"resource","tier":2,"stack":300,"weight":3,"scrap":2,"food":0,"water":0,"health":0,"live":false,"notes":"bullet casting","asset":"","scrapYield":[]},{"id":"resource_brass","name":"Brass","cat":"resource","tier":2,"stack":300,"weight":2,"scrap":3,"food":0,"water":0,"health":0,"live":false,"notes":"casings; loot-only scrap source","asset":"","scrapYield":[]},{"id":"resource_scrap_iron","name":"Scrap Iron","cat":"resource","tier":1,"stack":300,"weight":1.5,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"ruins loot; smelts cheaper than ore","asset":"","scrapYield":[]},{"id":"resource_plastic","name":"Scrap Plastic","cat":"resource","tier":1,"stack":300,"weight":0.5,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"ruins loot; mods + waterproofing","asset":"","scrapYield":[]},{"id":"resource_oil","name":"Oil","cat":"resource","tier":2,"stack":100,"weight":1,"scrap":2,"food":0,"water":0,"health":0,"live":false,"notes":"shale or looted cans; machines + fuel","asset":"","scrapYield":[]},{"id":"component_nails","name":"Nails","cat":"component","tier":1,"stack":300,"weight":0.2,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"iron; wood building + traps","asset":"","scrapYield":[]},{"id":"component_screws","name":"Screws","cat":"component","tier":1,"stack":300,"weight":0.2,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"salvage; mechanisms","asset":"","scrapYield":[]},{"id":"component_spring","name":"Spring","cat":"component","tier":2,"stack":100,"weight":0.3,"scrap":2,"food":0,"water":0,"health":0,"live":false,"notes":"salvage; guns + traps","asset":"","scrapYield":[{"id":"resource_scrap_iron","qty":1}]},{"id":"component_gear_set","name":"Gear Set","cat":"component","tier":2,"stack":100,"weight":0.8,"scrap":2,"food":0,"water":0,"health":0,"live":false,"notes":"salvage; machines","asset":"","scrapYield":[]},{"id":"component_pipe","name":"Iron Pipe","cat":"component","tier":1,"stack":100,"weight":1.5,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"salvage + forge; guns + plumbing","asset":"","scrapYield":[{"id":"resource_scrap_iron","qty":1}]},{"id":"component_duct_tape","name":"Duct Tape","cat":"component","tier":1,"stack":100,"weight":0.3,"scrap":2,"food":0,"water":0,"health":0,"live":false,"notes":"the universal fastener","asset":"","scrapYield":[]},{"id":"component_glue","name":"Bone Glue","cat":"component","tier":1,"stack":100,"weight":0.3,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"boiled bones + resin","asset":"","scrapYield":[]},{"id":"component_cord","name":"Cord","cat":"component","tier":0,"stack":200,"weight":0.2,"scrap":0,"food":0,"water":0,"health":0,"live":false,"notes":"light rope; bows + fletching","asset":"","scrapYield":[]},{"id":"component_gunpowder","name":"Gunpowder","cat":"component","tier":2,"stack":300,"weight":0.3,"scrap":2,"food":0,"water":0,"health":0,"live":false,"notes":"saltpeter + charcoal + sulfur","asset":"","scrapYield":[]},{"id":"component_brass_casing","name":"Brass Casing","cat":"component","tier":2,"stack":500,"weight":0.1,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"ammo crafting","asset":"","scrapYield":[]},{"id":"component_lead_slug","name":"Lead Slug","cat":"component","tier":2,"stack":500,"weight":0.1,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"ammo crafting","asset":"","scrapYield":[]},{"id":"component_mechanical_parts","name":"Mechanical Parts","cat":"component","tier":2,"stack":100,"weight":1,"scrap":3,"food":0,"water":0,"health":0,"live":false,"notes":"salvaged machines; workbench tier","asset":"","scrapYield":[]},{"id":"component_electrical_parts","name":"Electrical Parts","cat":"component","tier":3,"stack":100,"weight":0.5,"scrap":3,"food":0,"water":0,"health":0,"live":false,"notes":"salvaged electronics; powered gear","asset":"","scrapYield":[]},{"id":"component_copper_wire","name":"Copper Wire","cat":"component","tier":2,"stack":200,"weight":0.3,"scrap":2,"food":0,"water":0,"health":0,"live":false,"notes":"drawn copper; electrics","asset":"","scrapYield":[]},{"id":"component_battery_pack","name":"Battery Pack","cat":"component","tier":3,"stack":50,"weight":2,"scrap":4,"food":0,"water":0,"health":0,"live":false,"notes":"looted; powered tools + lights","asset":"","scrapYield":[]},{"id":"component_engine_parts","name":"Engine Parts","cat":"component","tier":3,"stack":50,"weight":4,"scrap":5,"food":0,"water":0,"health":0,"live":false,"notes":"vehicle + generator tier","asset":"","scrapYield":[]},{"id":"component_sturdy_handle","name":"Sturdy Handle","cat":"component","tier":1,"stack":100,"weight":0.8,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"shaped wood; tool crafting","asset":"","scrapYield":[]},{"id":"component_leather_strap","name":"Leather Strap","cat":"component","tier":1,"stack":100,"weight":0.3,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"grips + armor fastening","asset":"","scrapYield":[]},{"id":"component_whetstone","name":"Whetstone","cat":"component","tier":1,"stack":50,"weight":1,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"tool/blade repair kit ingredient","asset":"","scrapYield":[]},{"id":"component_filter_wadding","name":"Filter Wadding","cat":"component","tier":2,"stack":100,"weight":0.2,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"charcoal + cloth; masks + water filters","asset":"","scrapYield":[]},{"id":"food_apple","name":"Apple","cat":"food","tier":0,"stack":25,"weight":0.3,"scrap":0,"food":12,"water":5,"health":0,"live":true,"notes":"","asset":"","scrapYield":[]},{"id":"food_peach","name":"Peach","cat":"food","tier":0,"stack":25,"weight":0.3,"scrap":0,"food":12,"water":6,"health":0,"live":true,"notes":"","asset":"","scrapYield":[]},{"id":"food_pear","name":"Pear","cat":"food","tier":0,"stack":25,"weight":0.3,"scrap":0,"food":12,"water":5,"health":0,"live":true,"notes":"","asset":"","scrapYield":[]},{"id":"food_blueberries","name":"Blueberries","cat":"food","tier":0,"stack":50,"weight":0.1,"scrap":0,"food":8,"water":3,"health":0,"live":true,"notes":"","asset":"","scrapYield":[]},{"id":"food_raspberries","name":"Raspberries","cat":"food","tier":0,"stack":50,"weight":0.1,"scrap":0,"food":8,"water":3,"health":0,"live":true,"notes":"","asset":"","scrapYield":[]},{"id":"food_baked_apple","name":"Baked Apple","cat":"food","tier":1,"stack":25,"weight":0.3,"scrap":0,"food":30,"water":6,"health":0,"live":true,"notes":"","asset":"","scrapYield":[]},{"id":"food_raw_meat","name":"Raw Meat","cat":"food","tier":0,"stack":50,"weight":1,"scrap":0,"food":5,"water":0,"health":0,"live":false,"notes":"eat raw at your peril (sickness later)","asset":"","scrapYield":[]},{"id":"food_cooked_meat","name":"Cooked Meat","cat":"food","tier":1,"stack":50,"weight":1,"scrap":0,"food":35,"water":0,"health":0,"live":false,"notes":"campfire staple","asset":"","scrapYield":[]},{"id":"food_charred_meat","name":"Charred Meat","cat":"food","tier":0,"stack":50,"weight":1,"scrap":0,"food":20,"water":-5,"health":0,"live":false,"notes":"burned it; dries you out","asset":"","scrapYield":[]},{"id":"food_jerky","name":"Jerky","cat":"food","tier":2,"stack":50,"weight":0.5,"scrap":0,"food":25,"water":-5,"health":0,"live":false,"notes":"dried meat; slow to spoil (spoilage LATER)","asset":"","scrapYield":[]},{"id":"food_raw_fish","name":"Raw Fish","cat":"food","tier":0,"stack":50,"weight":0.8,"scrap":0,"food":5,"water":2,"health":0,"live":false,"notes":"needs fishing rod (Stage 8 water)","asset":"","scrapYield":[]},{"id":"food_cooked_fish","name":"Cooked Fish","cat":"food","tier":1,"stack":50,"weight":0.8,"scrap":0,"food":30,"water":2,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"food_mushrooms","name":"Forest Mushrooms","cat":"food","tier":0,"stack":50,"weight":0.2,"scrap":0,"food":8,"water":2,"health":0,"live":false,"notes":"forest floor harvestable","asset":"","scrapYield":[]},{"id":"food_roasted_mushrooms","name":"Roasted Mushrooms","cat":"food","tier":1,"stack":50,"weight":0.2,"scrap":0,"food":22,"water":2,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"food_wild_greens","name":"Wild Greens","cat":"food","tier":0,"stack":50,"weight":0.1,"scrap":0,"food":6,"water":4,"health":0,"live":false,"notes":"foraged","asset":"","scrapYield":[]},{"id":"food_egg","name":"Bird Egg","cat":"food","tier":0,"stack":25,"weight":0.2,"scrap":0,"food":8,"water":0,"health":0,"live":false,"notes":"nest harvestable","asset":"","scrapYield":[]},{"id":"food_boiled_egg","name":"Boiled Egg","cat":"food","tier":1,"stack":25,"weight":0.2,"scrap":0,"food":20,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"food_wild_onion","name":"Wild Onion","cat":"food","tier":0,"stack":50,"weight":0.2,"scrap":0,"food":6,"water":2,"health":0,"live":false,"notes":"foraged root","asset":"","scrapYield":[]},{"id":"food_potato","name":"Potato","cat":"food","tier":0,"stack":50,"weight":0.3,"scrap":0,"food":10,"water":2,"health":0,"live":false,"notes":"farm crop","asset":"","scrapYield":[]},{"id":"food_carrot","name":"Carrot","cat":"food","tier":0,"stack":50,"weight":0.2,"scrap":0,"food":8,"water":3,"health":0,"live":false,"notes":"farm crop","asset":"","scrapYield":[]},{"id":"food_wild_grain","name":"Wild Grain","cat":"food","tier":0,"stack":100,"weight":0.2,"scrap":0,"food":4,"water":0,"health":0,"live":false,"notes":"foraged; mills to porridge + flatbread","asset":"","scrapYield":[]},{"id":"food_porridge","name":"Porridge","cat":"food","tier":1,"stack":25,"weight":0.5,"scrap":0,"food":28,"water":8,"health":0,"live":false,"notes":"grain + water at campfire","asset":"","scrapYield":[]},{"id":"food_flatbread","name":"Flatbread","cat":"food","tier":1,"stack":25,"weight":0.3,"scrap":0,"food":26,"water":0,"health":0,"live":false,"notes":"grain on a hot stone","asset":"","scrapYield":[]},{"id":"food_meat_stew","name":"Meat Stew","cat":"food","tier":2,"stack":10,"weight":0.8,"scrap":0,"food":55,"water":15,"health":0,"live":false,"notes":"pot recipe; best-in-slot early food","asset":"","scrapYield":[]},{"id":"food_vegetable_soup","name":"Vegetable Soup","cat":"food","tier":2,"stack":10,"weight":0.8,"scrap":0,"food":40,"water":20,"health":0,"live":false,"notes":"pot recipe","asset":"","scrapYield":[]},{"id":"food_berry_jam","name":"Berry Jam","cat":"food","tier":2,"stack":25,"weight":0.4,"scrap":0,"food":25,"water":5,"health":0,"live":false,"notes":"jarred; berries + heat","asset":"","scrapYield":[]},{"id":"food_trail_mix","name":"Trail Mix","cat":"food","tier":1,"stack":25,"weight":0.3,"scrap":0,"food":24,"water":0,"health":0,"live":false,"notes":"berries + acorns; no cooking needed","asset":"","scrapYield":[]},{"id":"food_acorns","name":"Acorns","cat":"food","tier":0,"stack":100,"weight":0.2,"scrap":0,"food":3,"water":0,"health":0,"live":false,"notes":"bitter but everywhere","asset":"","scrapYield":[]},{"id":"food_honey","name":"Wild Honey","cat":"food","tier":1,"stack":25,"weight":0.5,"scrap":1,"food":18,"water":2,"health":5,"live":false,"notes":"tree-hive harvestable; minor heal","asset":"","scrapYield":[]},{"id":"food_canned_beans","name":"Canned Beans","cat":"food","tier":1,"stack":25,"weight":0.8,"scrap":1,"food":30,"water":5,"health":0,"live":false,"notes":"loot only; pre-plague stock","asset":"","scrapYield":[]},{"id":"food_canned_soup","name":"Canned Soup","cat":"food","tier":1,"stack":25,"weight":0.8,"scrap":1,"food":25,"water":15,"health":0,"live":false,"notes":"loot only","asset":"","scrapYield":[]},{"id":"food_stale_crackers","name":"Stale Crackers","cat":"food","tier":0,"stack":50,"weight":0.2,"scrap":0,"food":15,"water":-5,"health":0,"live":false,"notes":"loot only; dry","asset":"","scrapYield":[]},{"id":"food_field_ration","name":"Field Ration","cat":"food","tier":2,"stack":10,"weight":0.5,"scrap":2,"food":45,"water":10,"health":0,"live":false,"notes":"rare loot; military stock","asset":"","scrapYield":[]},{"id":"drink_fruit_tea","name":"Fruit Tea","cat":"drink","tier":1,"stack":10,"weight":0.4,"scrap":0,"food":4,"water":35,"health":0,"live":true,"notes":"","asset":"","scrapYield":[]},{"id":"drink_berry_tea","name":"Berry Tea","cat":"drink","tier":1,"stack":10,"weight":0.4,"scrap":0,"food":6,"water":30,"health":0,"live":true,"notes":"","asset":"","scrapYield":[]},{"id":"drink_murky_water","name":"Murky Water","cat":"drink","tier":0,"stack":10,"weight":1,"scrap":0,"food":0,"water":20,"health":0,"live":false,"notes":"sickness risk later; boil it","asset":"","scrapYield":[]},{"id":"drink_boiled_water","name":"Boiled Water","cat":"drink","tier":1,"stack":10,"weight":1,"scrap":0,"food":0,"water":40,"health":0,"live":false,"notes":"campfire + pot","asset":"","scrapYield":[]},{"id":"drink_pine_tea","name":"Pine Needle Tea","cat":"drink","tier":1,"stack":10,"weight":0.4,"scrap":0,"food":2,"water":32,"health":0,"live":false,"notes":"needles everywhere; no fruit needed","asset":"","scrapYield":[]},{"id":"drink_birch_sap","name":"Birch Sap","cat":"drink","tier":0,"stack":10,"weight":0.5,"scrap":0,"food":4,"water":25,"health":0,"live":false,"notes":"tapped in spring (seasonal LATER)","asset":"","scrapYield":[]},{"id":"drink_bone_broth","name":"Bone Broth","cat":"drink","tier":1,"stack":10,"weight":0.6,"scrap":0,"food":15,"water":25,"health":0,"live":false,"notes":"bones + water; light meal too","asset":"","scrapYield":[]},{"id":"drink_old_soda","name":"Flat Soda","cat":"drink","tier":0,"stack":10,"weight":0.5,"scrap":1,"food":5,"water":20,"health":0,"live":false,"notes":"loot only; sugar rush later","asset":"","scrapYield":[]},{"id":"drink_coffee","name":"Camp Coffee","cat":"drink","tier":2,"stack":10,"weight":0.3,"scrap":1,"food":0,"water":25,"health":0,"live":false,"notes":"looted grounds; stamina perk later","asset":"","scrapYield":[]},{"id":"drink_waterskin","name":"Filled Waterskin","cat":"drink","tier":2,"stack":5,"weight":2,"scrap":2,"food":0,"water":60,"health":0,"live":false,"notes":"leather + water; reusable container later","asset":"","scrapYield":[]},{"id":"medical_herbal_remedy","name":"Herbal Remedy","cat":"medical","tier":1,"stack":10,"weight":0.2,"scrap":1,"food":0,"water":0,"health":25,"live":true,"notes":"","asset":"","scrapYield":[]},{"id":"medical_bandage","name":"Bandage","cat":"medical","tier":0,"stack":25,"weight":0.1,"scrap":0,"food":0,"water":0,"health":10,"live":false,"notes":"cloth; stops bleed (bleed system LATER)","asset":"","scrapYield":[]},{"id":"medical_clean_bandage","name":"Clean Bandage","cat":"medical","tier":1,"stack":25,"weight":0.1,"scrap":1,"food":0,"water":0,"health":18,"live":false,"notes":"boiled cloth","asset":"","scrapYield":[]},{"id":"medical_honey_dressing","name":"Honey Dressing","cat":"medical","tier":1,"stack":10,"weight":0.2,"scrap":1,"food":0,"water":0,"health":22,"live":false,"notes":"bandage + honey; anti-infection later","asset":"","scrapYield":[]},{"id":"medical_poultice","name":"Herb Poultice","cat":"medical","tier":1,"stack":10,"weight":0.2,"scrap":1,"food":0,"water":0,"health":20,"live":false,"notes":"yarrow mash; slow heal-over-time later","asset":"","scrapYield":[]},{"id":"medical_splint","name":"Splint","cat":"medical","tier":1,"stack":10,"weight":0.5,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"fixes broken limb (injury system LATER)","asset":"","scrapYield":[]},{"id":"medical_antiseptic","name":"Antiseptic","cat":"medical","tier":2,"stack":10,"weight":0.3,"scrap":2,"food":0,"water":0,"health":5,"live":false,"notes":"looted or distilled; wound infection","asset":"","scrapYield":[]},{"id":"medical_painkillers","name":"Painkillers","cat":"medical","tier":2,"stack":25,"weight":0.1,"scrap":2,"food":0,"water":0,"health":15,"live":false,"notes":"loot only; instant relief","asset":"","scrapYield":[]},{"id":"medical_antibiotics","name":"Antibiotics","cat":"medical","tier":3,"stack":10,"weight":0.1,"scrap":3,"food":0,"water":0,"health":0,"live":false,"notes":"rare loot; cures infection","asset":"","scrapYield":[]},{"id":"medical_fever_tonic","name":"Fever Tonic","cat":"medical","tier":2,"stack":10,"weight":0.3,"scrap":2,"food":0,"water":0,"health":10,"live":false,"notes":"feverfew brew; plague resistance later","asset":"","scrapYield":[]},{"id":"medical_plague_tincture","name":"Plague Tincture","cat":"medical","tier":3,"stack":10,"weight":0.3,"scrap":3,"food":0,"water":0,"health":0,"live":false,"notes":"endgame anti-plague; recipe gated","asset":"","scrapYield":[]},{"id":"medical_first_aid_kit","name":"First Aid Kit","cat":"medical","tier":3,"stack":5,"weight":1,"scrap":4,"food":0,"water":0,"health":60,"live":false,"notes":"rare loot; the big heal","asset":"","scrapYield":[]},{"id":"tool_stone_axe","name":"Stone Axe","cat":"tool","tier":0,"stack":1,"weight":2,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"starter chopper; gear stats when tool table lands","asset":"","scrapYield":[]},{"id":"tool_iron_axe","name":"Iron Axe","cat":"tool","tier":1,"stack":1,"weight":3,"scrap":2,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[{"id":"resource_scrap_iron","qty":2}]},{"id":"tool_steel_axe","name":"Steel Axe","cat":"tool","tier":3,"stack":1,"weight":3,"scrap":4,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"tool_stone_pickaxe","name":"Stone Pickaxe","cat":"tool","tier":0,"stack":1,"weight":2.5,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"tool_iron_pickaxe","name":"Iron Pickaxe","cat":"tool","tier":1,"stack":1,"weight":3.5,"scrap":2,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[{"id":"resource_scrap_iron","qty":2}]},{"id":"tool_steel_pickaxe","name":"Steel Pickaxe","cat":"tool","tier":3,"stack":1,"weight":3.5,"scrap":4,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"tool_wooden_shovel","name":"Wooden Shovel","cat":"tool","tier":0,"stack":1,"weight":2,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"tool_iron_shovel","name":"Iron Shovel","cat":"tool","tier":1,"stack":1,"weight":3,"scrap":2,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"tool_claw_hammer","name":"Claw Hammer","cat":"tool","tier":1,"stack":1,"weight":1.5,"scrap":2,"food":0,"water":0,"health":0,"live":false,"notes":"building/repair speed","asset":"","scrapYield":[]},{"id":"tool_pipe_wrench","name":"Pipe Wrench","cat":"tool","tier":1,"stack":1,"weight":2,"scrap":2,"food":0,"water":0,"health":0,"live":false,"notes":"salvage harvesting; doubles as a thumper","asset":"","scrapYield":[]},{"id":"tool_ratchet_kit","name":"Ratchet Kit","cat":"tool","tier":2,"stack":1,"weight":2,"scrap":3,"food":0,"water":0,"health":0,"live":false,"notes":"faster salvage; vehicle repair later","asset":"","scrapYield":[]},{"id":"tool_hunting_knife","name":"Hunting Knife","cat":"tool","tier":1,"stack":1,"weight":0.8,"scrap":2,"food":0,"water":0,"health":0,"live":false,"notes":"butchering yield; light weapon","asset":"","scrapYield":[]},{"id":"tool_torch","name":"Torch","cat":"tool","tier":0,"stack":10,"weight":1,"scrap":0,"food":0,"water":0,"health":0,"live":false,"notes":"handheld light; burns out","asset":"","scrapYield":[]},{"id":"tool_oil_lantern","name":"Oil Lantern","cat":"tool","tier":2,"stack":1,"weight":1.5,"scrap":2,"food":0,"water":0,"health":0,"live":false,"notes":"steady light; drinks oil","asset":"","scrapYield":[]},{"id":"tool_hoe","name":"Field Hoe","cat":"tool","tier":1,"stack":1,"weight":2.5,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"farming plots","asset":"","scrapYield":[]},{"id":"tool_fishing_rod","name":"Fishing Rod","cat":"tool","tier":1,"stack":1,"weight":1.5,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"Stage 8 water dependency","asset":"","scrapYield":[]},{"id":"weapon_wooden_club","name":"Wooden Club","cat":"weapon_melee","tier":0,"stack":1,"weight":2.5,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"the day-1 answer; gear stats when weapon table lands","asset":"","scrapYield":[]},{"id":"weapon_spiked_club","name":"Spiked Club","cat":"weapon_melee","tier":1,"stack":1,"weight":3,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"club + nails","asset":"","scrapYield":[]},{"id":"weapon_baseball_bat","name":"Baseball Bat","cat":"weapon_melee","tier":1,"stack":1,"weight":2,"scrap":2,"food":0,"water":0,"health":0,"live":false,"notes":"loot only","asset":"","scrapYield":[{"id":"resource_wood","qty":1}]},{"id":"weapon_wooden_spear","name":"Wooden Spear","cat":"weapon_melee","tier":0,"stack":1,"weight":2,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"reach; throwable later","asset":"","scrapYield":[]},{"id":"weapon_iron_spear","name":"Iron Spear","cat":"weapon_melee","tier":1,"stack":1,"weight":2.5,"scrap":2,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"weapon_machete","name":"Machete","cat":"weapon_melee","tier":2,"stack":1,"weight":1.5,"scrap":3,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[{"id":"resource_steel","qty":1}]},{"id":"weapon_fire_axe","name":"Fire Axe","cat":"weapon_melee","tier":2,"stack":1,"weight":3.5,"scrap":3,"food":0,"water":0,"health":0,"live":false,"notes":"slow + heavy hitter; chops in a pinch","asset":"","scrapYield":[]},{"id":"weapon_sledgehammer","name":"Sledgehammer","cat":"weapon_melee","tier":2,"stack":1,"weight":5,"scrap":3,"food":0,"water":0,"health":0,"live":false,"notes":"crowd knockdown; wrecks blocks too","asset":"","scrapYield":[]},{"id":"weapon_crowbar","name":"Crowbar","cat":"weapon_melee","tier":1,"stack":1,"weight":2.5,"scrap":2,"food":0,"water":0,"health":0,"live":false,"notes":"pry doors later; salvage bonus","asset":"","scrapYield":[]},{"id":"weapon_kitchen_knife","name":"Kitchen Knife","cat":"weapon_melee","tier":0,"stack":1,"weight":0.5,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"fast + weak; loot everywhere","asset":"","scrapYield":[]},{"id":"weapon_pitchfork","name":"Pitchfork","cat":"weapon_melee","tier":1,"stack":1,"weight":3,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"farm loot; reach","asset":"","scrapYield":[]},{"id":"weapon_brass_knuckles","name":"Brass Knuckles","cat":"weapon_melee","tier":2,"stack":1,"weight":0.5,"scrap":3,"food":0,"water":0,"health":0,"live":false,"notes":"fist-fighter lane","asset":"","scrapYield":[]},{"id":"weapon_wooden_bow","name":"Wooden Bow","cat":"weapon_ranged","tier":0,"stack":1,"weight":1.5,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"silent; gear stats when weapon table lands","asset":"","scrapYield":[]},{"id":"weapon_recurve_bow","name":"Recurve Bow","cat":"weapon_ranged","tier":2,"stack":1,"weight":1.5,"scrap":3,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"weapon_crossbow","name":"Crossbow","cat":"weapon_ranged","tier":2,"stack":1,"weight":3,"scrap":3,"food":0,"water":0,"health":0,"live":false,"notes":"hits hard; slow reload","asset":"","scrapYield":[]},{"id":"weapon_zip_gun","name":"Zip Gun","cat":"weapon_ranged","tier":1,"stack":1,"weight":1.5,"scrap":2,"food":0,"water":0,"health":0,"live":false,"notes":"improvised single-shot; first firearm","asset":"","scrapYield":[]},{"id":"weapon_revolver","name":"Revolver","cat":"weapon_ranged","tier":2,"stack":1,"weight":1.5,"scrap":3,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"weapon_double_barrel","name":"Double-Barrel Shotgun","cat":"weapon_ranged","tier":2,"stack":1,"weight":3,"scrap":3,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"weapon_pump_shotgun","name":"Pump Shotgun","cat":"weapon_ranged","tier":3,"stack":1,"weight":3.5,"scrap":4,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"weapon_hunting_rifle","name":"Hunting Rifle","cat":"weapon_ranged","tier":3,"stack":1,"weight":3.5,"scrap":4,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"weapon_lever_rifle","name":"Lever Rifle","cat":"weapon_ranged","tier":3,"stack":1,"weight":3,"scrap":4,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"ammo_stone_arrow","name":"Stone Arrow","cat":"ammo","tier":0,"stack":100,"weight":0.1,"scrap":0,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"ammo_iron_arrow","name":"Iron Arrow","cat":"ammo","tier":1,"stack":100,"weight":0.1,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"ammo_crossbow_bolt","name":"Crossbow Bolt","cat":"ammo","tier":1,"stack":100,"weight":0.1,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"ammo_pistol_rounds","name":"Pistol Rounds","cat":"ammo","tier":2,"stack":300,"weight":0.1,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"ammo_rifle_rounds","name":"Rifle Rounds","cat":"ammo","tier":2,"stack":300,"weight":0.1,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"ammo_shotgun_shells","name":"Shotgun Shells","cat":"ammo","tier":2,"stack":150,"weight":0.2,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"ammo_throwing_rock","name":"Throwing Rock","cat":"ammo","tier":0,"stack":50,"weight":0.5,"scrap":0,"food":0,"water":0,"health":0,"live":false,"notes":"noise-maker; aggro pull","asset":"","scrapYield":[]},{"id":"armor_padded_jacket","name":"Padded Jacket","cat":"armor","tier":0,"stack":1,"weight":2,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"cloth tier; gear stats when armor table lands","asset":"","scrapYield":[]},{"id":"armor_padded_pants","name":"Padded Pants","cat":"armor","tier":0,"stack":1,"weight":1.5,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"armor_leather_jacket","name":"Leather Jacket","cat":"armor","tier":1,"stack":1,"weight":3,"scrap":2,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"armor_leather_pants","name":"Leather Pants","cat":"armor","tier":1,"stack":1,"weight":2.5,"scrap":2,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"armor_leather_boots","name":"Leather Boots","cat":"armor","tier":1,"stack":1,"weight":1.5,"scrap":2,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"armor_leather_gloves","name":"Leather Gloves","cat":"armor","tier":1,"stack":1,"weight":0.5,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"armor_scrap_vest","name":"Scrap Plate Vest","cat":"armor","tier":2,"stack":1,"weight":6,"scrap":3,"food":0,"water":0,"health":0,"live":false,"notes":"iron plates on leather","asset":"","scrapYield":[{"id":"resource_scrap_iron","qty":3}]},{"id":"armor_scrap_helmet","name":"Scrap Helmet","cat":"armor","tier":2,"stack":1,"weight":2.5,"scrap":2,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"armor_mining_helmet","name":"Mining Helmet","cat":"armor","tier":2,"stack":1,"weight":2,"scrap":3,"food":0,"water":0,"health":0,"live":false,"notes":"head lamp; loot only","asset":"","scrapYield":[]},{"id":"armor_work_boots","name":"Work Boots","cat":"armor","tier":1,"stack":1,"weight":2,"scrap":2,"food":0,"water":0,"health":0,"live":false,"notes":"loot only","asset":"","scrapYield":[]},{"id":"armor_rain_poncho","name":"Rain Poncho","cat":"armor","tier":0,"stack":1,"weight":1,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"weather layer (weather LATER)","asset":"","scrapYield":[]},{"id":"armor_wool_cap","name":"Wool Cap","cat":"armor","tier":0,"stack":1,"weight":0.3,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"cold layer (temperature LATER)","asset":"","scrapYield":[]},{"id":"armor_filter_mask","name":"Filter Mask","cat":"armor","tier":3,"stack":1,"weight":1,"scrap":4,"food":0,"water":0,"health":0,"live":false,"notes":"plague-zone access later; wadding + straps","asset":"","scrapYield":[]},{"id":"armor_denim_jacket","name":"Denim Jacket","cat":"armor","tier":0,"stack":1,"weight":1.5,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"loot only; style","asset":"","scrapYield":[]},{"id":"seed_potato","name":"Seed Potato","cat":"seed","tier":1,"stack":50,"weight":0.3,"scrap":0,"food":0,"water":0,"health":0,"live":false,"notes":"farm chain","asset":"","scrapYield":[]},{"id":"seed_carrot","name":"Carrot Seeds","cat":"seed","tier":1,"stack":100,"weight":0.1,"scrap":0,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"seed_onion","name":"Onion Sets","cat":"seed","tier":1,"stack":100,"weight":0.1,"scrap":0,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"seed_grain","name":"Grain Seed","cat":"seed","tier":1,"stack":100,"weight":0.1,"scrap":0,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"seed_berry_cutting","name":"Berry Cutting","cat":"seed","tier":1,"stack":50,"weight":0.2,"scrap":0,"food":0,"water":0,"health":0,"live":false,"notes":"propagate wild bushes","asset":"","scrapYield":[]},{"id":"seed_mushroom_spores","name":"Mushroom Spores","cat":"seed","tier":2,"stack":50,"weight":0.1,"scrap":0,"food":0,"water":0,"health":0,"live":false,"notes":"cave/cellar farming","asset":"","scrapYield":[]},{"id":"seed_yarrow","name":"Yarrow Seeds","cat":"seed","tier":2,"stack":100,"weight":0.1,"scrap":0,"food":0,"water":0,"health":0,"live":false,"notes":"medicine farming","asset":"","scrapYield":[]},{"id":"seed_feverfew","name":"Feverfew Seeds","cat":"seed","tier":2,"stack":100,"weight":0.1,"scrap":0,"food":0,"water":0,"health":0,"live":false,"notes":"medicine farming","asset":"","scrapYield":[]},{"id":"schematic_forge_plans","name":"Forge Plans","cat":"schematic","tier":1,"stack":1,"weight":0.2,"scrap":3,"food":0,"water":0,"health":0,"live":false,"notes":"unlocks forge recipe (unlock system LATER)","asset":"","scrapYield":[]},{"id":"schematic_workbench_notes","name":"Toolmaking Notes","cat":"schematic","tier":1,"stack":1,"weight":0.2,"scrap":3,"food":0,"water":0,"health":0,"live":false,"notes":"unlocks workbench upgrades","asset":"","scrapYield":[]},{"id":"schematic_gun_manual","name":"Gun Repair Manual","cat":"schematic","tier":2,"stack":1,"weight":0.2,"scrap":4,"food":0,"water":0,"health":0,"live":false,"notes":"unlocks firearm crafting","asset":"","scrapYield":[]},{"id":"schematic_trap_blueprints","name":"Trap Blueprints","cat":"schematic","tier":2,"stack":1,"weight":0.2,"scrap":4,"food":0,"water":0,"health":0,"live":false,"notes":"unlocks trap tier","asset":"","scrapYield":[]},{"id":"schematic_medicine_journal","name":"Medicine Journal","cat":"schematic","tier":2,"stack":1,"weight":0.2,"scrap":4,"food":0,"water":0,"health":0,"live":false,"notes":"unlocks tonics + tinctures","asset":"","scrapYield":[]},{"id":"schematic_cooking_notes","name":"Camp Cooking Notes","cat":"schematic","tier":1,"stack":1,"weight":0.2,"scrap":3,"food":0,"water":0,"health":0,"live":false,"notes":"unlocks pot recipes","asset":"","scrapYield":[]},{"id":"schematic_farming_almanac","name":"Farming Almanac","cat":"schematic","tier":1,"stack":1,"weight":0.2,"scrap":3,"food":0,"water":0,"health":0,"live":false,"notes":"unlocks seed recipes","asset":"","scrapYield":[]},{"id":"schematic_armor_patterns","name":"Armor Patterns","cat":"schematic","tier":2,"stack":1,"weight":0.2,"scrap":4,"food":0,"water":0,"health":0,"live":false,"notes":"unlocks scrap plate tier","asset":"","scrapYield":[]},{"id":"misc_empty_can","name":"Empty Can","cat":"misc","tier":0,"stack":100,"weight":0.2,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"scrap fodder; also a noise trap later","asset":"","scrapYield":[{"id":"resource_scrap_iron","qty":1}]},{"id":"misc_glass_jar","name":"Glass Jar","cat":"misc","tier":0,"stack":50,"weight":0.5,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"water + jam container","asset":"","scrapYield":[]},{"id":"misc_plastic_bottle","name":"Plastic Bottle","cat":"misc","tier":0,"stack":50,"weight":0.2,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"water container","asset":"","scrapYield":[]},{"id":"misc_candle","name":"Candle","cat":"misc","tier":0,"stack":50,"weight":0.3,"scrap":0,"food":0,"water":0,"health":0,"live":false,"notes":"tallow; dim safe light","asset":"","scrapYield":[]},{"id":"misc_matches","name":"Matches","cat":"misc","tier":1,"stack":100,"weight":0.1,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"loot; fire without flint","asset":"","scrapYield":[]},{"id":"misc_lighter","name":"Lighter","cat":"misc","tier":2,"stack":1,"weight":0.2,"scrap":2,"food":0,"water":0,"health":0,"live":false,"notes":"loot; reusable fire","asset":"","scrapYield":[]},{"id":"misc_sewing_kit","name":"Sewing Kit","cat":"misc","tier":1,"stack":25,"weight":0.3,"scrap":2,"food":0,"water":0,"health":0,"live":false,"notes":"cloth armor crafting + repair","asset":"","scrapYield":[]},{"id":"misc_old_clothes","name":"Old Clothes","cat":"misc","tier":0,"stack":50,"weight":1,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"scraps to cloth","asset":"","scrapYield":[]},{"id":"misc_broken_radio","name":"Broken Radio","cat":"misc","tier":1,"stack":25,"weight":2,"scrap":3,"food":0,"water":0,"health":0,"live":false,"notes":"scraps to electrical parts","asset":"","scrapYield":[{"id":"component_electrical_parts","qty":1},{"id":"component_copper_wire","qty":1}]},{"id":"misc_silver_ring","name":"Silver Ring","cat":"misc","tier":0,"stack":50,"weight":0.1,"scrap":4,"food":0,"water":0,"health":0,"live":false,"notes":"pure trader value","asset":"","scrapYield":[]},{"id":"misc_pocket_watch","name":"Pocket Watch","cat":"misc","tier":0,"stack":50,"weight":0.2,"scrap":5,"food":0,"water":0,"health":0,"live":false,"notes":"pure trader value","asset":"","scrapYield":[]},{"id":"misc_padlock","name":"Padlock","cat":"misc","tier":1,"stack":50,"weight":0.5,"scrap":2,"food":0,"water":0,"health":0,"live":false,"notes":"scraps to spring + iron","asset":"","scrapYield":[{"id":"component_spring","qty":1},{"id":"resource_scrap_iron","qty":1}]},{"id":"trophy_blight_gland","name":"Blight Gland","cat":"trophy","tier":2,"stack":50,"weight":0.3,"scrap":0,"food":0,"water":0,"health":0,"live":false,"notes":"elite zombie drop; tincture ingredient","asset":"","scrapYield":[]},{"id":"currency_scrap","name":"Scrap","cat":"currency","tier":0,"stack":1000,"weight":0,"scrap":0,"food":0,"water":0,"health":0,"live":false,"notes":"trader currency (Stage 9)","asset":"","scrapYield":[]},{"id":"currency_blood_mark","name":"Blood Mark","cat":"currency","tier":0,"stack":1000,"weight":0,"scrap":0,"food":0,"water":0,"health":0,"live":false,"notes":"horde-night currency (name pending)","asset":"","scrapYield":[]},{"id":"furniture_bedroll","name":"Bedroll","cat":"furniture","tier":0,"stack":1,"weight":3,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"cheap early respawn point (respawn LATER)","asset":"","scrapYield":[]},{"id":"furniture_bed","name":"Bed","cat":"furniture","tier":1,"stack":1,"weight":15,"scrap":3,"food":0,"water":0,"health":0,"live":false,"notes":"sleep + respawn point","asset":"","scrapYield":[]},{"id":"furniture_storage_chest","name":"Storage Chest","cat":"furniture","tier":1,"stack":1,"weight":10,"scrap":2,"food":0,"water":0,"health":0,"live":false,"notes":"player storage container","asset":"","scrapYield":[]},{"id":"furniture_wood_chair","name":"Wooden Chair","cat":"furniture","tier":0,"stack":1,"weight":4,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"furniture_wood_table","name":"Wooden Table","cat":"furniture","tier":0,"stack":1,"weight":8,"scrap":2,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"furniture_shelf","name":"Shelf","cat":"furniture","tier":0,"stack":1,"weight":6,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"wall storage","asset":"","scrapYield":[]},{"id":"furniture_cabinet","name":"Cabinet","cat":"furniture","tier":1,"stack":1,"weight":12,"scrap":2,"food":0,"water":0,"health":0,"live":false,"notes":"storage","asset":"","scrapYield":[]},{"id":"furniture_bookshelf","name":"Bookshelf","cat":"furniture","tier":1,"stack":1,"weight":10,"scrap":2,"food":0,"water":0,"health":0,"live":false,"notes":"loot source for schematics","asset":"","scrapYield":[]},{"id":"furniture_bench","name":"Bench","cat":"furniture","tier":0,"stack":1,"weight":6,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"furniture_ladder","name":"Ladder","cat":"furniture","tier":0,"stack":1,"weight":5,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"climbable","asset":"","scrapYield":[]},{"id":"decor_rug","name":"Woven Rug","cat":"decoration","tier":0,"stack":1,"weight":2,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"decor_painting","name":"Framed Painting","cat":"decoration","tier":0,"stack":1,"weight":2,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"decor_curtains","name":"Curtains","cat":"decoration","tier":0,"stack":1,"weight":1,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"decor_potted_plant","name":"Potted Plant","cat":"decoration","tier":0,"stack":1,"weight":2,"scrap":0,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"decor_candle_holder","name":"Candle Holder","cat":"decoration","tier":0,"stack":1,"weight":2,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"decor_wall_banner","name":"Wall Banner","cat":"decoration","tier":0,"stack":1,"weight":2,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"decor_skull_pile","name":"Skull Pile","cat":"decoration","tier":0,"stack":1,"weight":3,"scrap":0,"food":0,"water":0,"health":0,"live":false,"notes":"grim plague-town dressing","asset":"","scrapYield":[]},{"id":"decor_mounted_skull","name":"Mounted Skull","cat":"decoration","tier":0,"stack":1,"weight":2,"scrap":0,"food":0,"water":0,"health":0,"live":false,"notes":"wall trophy mount","asset":"","scrapYield":[]},{"id":"decor_mirror","name":"Mirror","cat":"decoration","tier":0,"stack":1,"weight":3,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]},{"id":"decor_wall_clock","name":"Wall Clock","cat":"decoration","tier":0,"stack":1,"weight":2,"scrap":1,"food":0,"water":0,"health":0,"live":false,"notes":"","asset":"","scrapYield":[]}],"recipes":[{"id":"campfire","name":"Campfire","station":"","secs":2,"inputs":[{"id":"resource_wood","qty":5},{"id":"resource_stone","qty":8}],"out":"","outQty":0,"places":"campfire","live":true,"notes":""},{"id":"workbench","name":"Workbench","station":"","secs":4,"inputs":[{"id":"resource_wood","qty":12},{"id":"resource_stone","qty":4}],"out":"","outQty":0,"places":"workbench","live":true,"notes":""},{"id":"forge","name":"Forge","station":"","secs":6,"inputs":[{"id":"resource_stone","qty":20},{"id":"resource_clay","qty":10},{"id":"resource_wood","qty":8}],"out":"","outQty":0,"places":"forge","live":false,"notes":"smelting + metalwork station"},{"id":"tanning_rack","name":"Tanning Rack","station":"","secs":4,"inputs":[{"id":"resource_wood","qty":10},{"id":"component_cord","qty":4}],"out":"","outQty":0,"places":"tanning_rack","live":false,"notes":"hides to leather"},{"id":"apothecary_table","name":"Apothecary Table","station":"workbench","secs":5,"inputs":[{"id":"resource_wood","qty":8},{"id":"misc_glass_jar","qty":2},{"id":"resource_cloth","qty":4}],"out":"","outQty":0,"places":"apothecary_table","live":false,"notes":"medicine station; built near a workbench"},{"id":"baked_apple","name":"Baked Apple","station":"campfire","secs":3,"inputs":[{"id":"food_apple","qty":2},{"id":"resource_wood","qty":1}],"out":"food_baked_apple","outQty":1,"places":"","live":true,"notes":""},{"id":"fruit_tea","name":"Fruit Tea","station":"campfire","secs":3,"inputs":[{"id":"food_apple","qty":1},{"id":"resource_wood","qty":1}],"out":"drink_fruit_tea","outQty":1,"places":"","live":true,"notes":""},{"id":"berry_tea","name":"Berry Tea","station":"campfire","secs":3,"inputs":[{"id":"food_blueberries","qty":3},{"id":"resource_wood","qty":1}],"out":"drink_berry_tea","outQty":1,"places":"","live":true,"notes":""},{"id":"herbal_remedy","name":"Herbal Remedy","station":"campfire","secs":4,"inputs":[{"id":"resource_feverfew","qty":2},{"id":"resource_yarrow","qty":2},{"id":"resource_wood","qty":1}],"out":"medical_herbal_remedy","outQty":1,"places":"","live":true,"notes":""},{"id":"charcoal","name":"Charcoal","station":"campfire","secs":3,"inputs":[{"id":"resource_wood","qty":3}],"out":"resource_charcoal","outQty":2,"places":"","live":false,"notes":"slow burn"},{"id":"cloth","name":"Cloth","station":"","secs":3,"inputs":[{"id":"resource_fiber","qty":4}],"out":"resource_cloth","outQty":1,"places":"","live":false,"notes":"hand-woven"},{"id":"cord","name":"Cord","station":"","secs":2,"inputs":[{"id":"resource_fiber","qty":3}],"out":"component_cord","outQty":1,"places":"","live":false,"notes":""},{"id":"rope","name":"Rope","station":"","secs":3,"inputs":[{"id":"component_cord","qty":4}],"out":"resource_rope","outQty":1,"places":"","live":false,"notes":""},{"id":"tallow","name":"Tallow","station":"campfire","secs":3,"inputs":[{"id":"resource_animal_fat","qty":2}],"out":"resource_tallow","outQty":1,"places":"","live":false,"notes":"rendered"},{"id":"bone_glue","name":"Bone Glue","station":"campfire","secs":4,"inputs":[{"id":"resource_bone","qty":3},{"id":"resource_resin","qty":1}],"out":"component_glue","outQty":2,"places":"","live":false,"notes":"boiled down"},{"id":"smelt_iron","name":"Smelt Iron","station":"forge","secs":4,"inputs":[{"id":"resource_iron_ore","qty":1}],"out":"resource_scrap_iron","outQty":2,"places":"","live":false,"notes":"ore to workable iron"},{"id":"steel","name":"Steel","station":"forge","secs":6,"inputs":[{"id":"resource_scrap_iron","qty":3},{"id":"resource_coal","qty":2}],"out":"resource_steel","outQty":1,"places":"","live":false,"notes":"COAL SINK - the big one"},{"id":"glass","name":"Glass","station":"forge","secs":4,"inputs":[{"id":"resource_sand","qty":2}],"out":"resource_glass","outQty":1,"places":"","live":false,"notes":""},{"id":"glass_jar","name":"Glass Jar","station":"forge","secs":3,"inputs":[{"id":"resource_glass","qty":2}],"out":"misc_glass_jar","outQty":1,"places":"","live":false,"notes":""},{"id":"concrete_mix","name":"Concrete Mix","station":"workbench","secs":3,"inputs":[{"id":"resource_stone","qty":4},{"id":"resource_sand","qty":2},{"id":"resource_clay","qty":1}],"out":"resource_concrete","outQty":2,"places":"","live":false,"notes":""},{"id":"nails","name":"Nails","station":"forge","secs":2,"inputs":[{"id":"resource_scrap_iron","qty":1}],"out":"component_nails","outQty":8,"places":"","live":false,"notes":""},{"id":"pipe","name":"Iron Pipe","station":"forge","secs":3,"inputs":[{"id":"resource_scrap_iron","qty":2}],"out":"component_pipe","outQty":1,"places":"","live":false,"notes":""},{"id":"copper_wire","name":"Copper Wire","station":"forge","secs":3,"inputs":[{"id":"resource_copper_ore","qty":2}],"out":"component_copper_wire","outQty":3,"places":"","live":false,"notes":"drawn"},{"id":"brass_casing","name":"Brass Casing","station":"workbench","secs":2,"inputs":[{"id":"resource_brass","qty":1}],"out":"component_brass_casing","outQty":4,"places":"","live":false,"notes":""},{"id":"lead_slug","name":"Lead Slug","station":"campfire","secs":2,"inputs":[{"id":"resource_lead","qty":1}],"out":"component_lead_slug","outQty":4,"places":"","live":false,"notes":"melts easy"},{"id":"gunpowder","name":"Gunpowder","station":"workbench","secs":4,"inputs":[{"id":"resource_saltpeter","qty":2},{"id":"resource_charcoal","qty":1},{"id":"resource_sulfur","qty":1}],"out":"component_gunpowder","outQty":2,"places":"","live":false,"notes":"COAL via charcoal"},{"id":"sturdy_handle","name":"Sturdy Handle","station":"","secs":2,"inputs":[{"id":"resource_wood","qty":3}],"out":"component_sturdy_handle","outQty":1,"places":"","live":false,"notes":""},{"id":"leather_strap","name":"Leather Strap","station":"","secs":2,"inputs":[{"id":"resource_leather","qty":1}],"out":"component_leather_strap","outQty":2,"places":"","live":false,"notes":""},{"id":"whetstone","name":"Whetstone","station":"","secs":3,"inputs":[{"id":"resource_stone","qty":2}],"out":"component_whetstone","outQty":1,"places":"","live":false,"notes":""},{"id":"filter_wadding","name":"Filter Wadding","station":"","secs":3,"inputs":[{"id":"resource_charcoal","qty":2},{"id":"resource_cloth","qty":1}],"out":"component_filter_wadding","outQty":2,"places":"","live":false,"notes":""},{"id":"candle","name":"Candle","station":"","secs":2,"inputs":[{"id":"resource_tallow","qty":1},{"id":"component_cord","qty":1}],"out":"misc_candle","outQty":2,"places":"","live":false,"notes":""},{"id":"torch","name":"Torch","station":"","secs":2,"inputs":[{"id":"resource_wood","qty":1},{"id":"resource_cloth","qty":1},{"id":"resource_resin","qty":1}],"out":"tool_torch","outQty":2,"places":"","live":false,"notes":""},{"id":"leather","name":"Leather","station":"tanning_rack","secs":6,"inputs":[{"id":"resource_raw_hide","qty":2}],"out":"resource_leather","outQty":1,"places":"","live":false,"notes":"slow tan"},{"id":"stone_axe","name":"Stone Axe","station":"","secs":3,"inputs":[{"id":"resource_wood","qty":2},{"id":"resource_stone","qty":3},{"id":"resource_fiber","qty":2}],"out":"tool_stone_axe","outQty":1,"places":"","live":false,"notes":"day-1 hand craft"},{"id":"stone_pickaxe","name":"Stone Pickaxe","station":"","secs":3,"inputs":[{"id":"resource_wood","qty":2},{"id":"resource_stone","qty":4},{"id":"resource_fiber","qty":2}],"out":"tool_stone_pickaxe","outQty":1,"places":"","live":false,"notes":""},{"id":"wooden_shovel","name":"Wooden Shovel","station":"","secs":3,"inputs":[{"id":"resource_wood","qty":4},{"id":"resource_fiber","qty":2}],"out":"tool_wooden_shovel","outQty":1,"places":"","live":false,"notes":""},{"id":"iron_axe","name":"Iron Axe","station":"workbench","secs":5,"inputs":[{"id":"component_sturdy_handle","qty":1},{"id":"resource_scrap_iron","qty":4},{"id":"component_leather_strap","qty":1}],"out":"tool_iron_axe","outQty":1,"places":"","live":false,"notes":""},{"id":"iron_pickaxe","name":"Iron Pickaxe","station":"workbench","secs":5,"inputs":[{"id":"component_sturdy_handle","qty":1},{"id":"resource_scrap_iron","qty":5},{"id":"component_leather_strap","qty":1}],"out":"tool_iron_pickaxe","outQty":1,"places":"","live":false,"notes":""},{"id":"iron_shovel","name":"Iron Shovel","station":"workbench","secs":4,"inputs":[{"id":"component_sturdy_handle","qty":1},{"id":"resource_scrap_iron","qty":3}],"out":"tool_iron_shovel","outQty":1,"places":"","live":false,"notes":""},{"id":"steel_axe","name":"Steel Axe","station":"workbench","secs":6,"inputs":[{"id":"component_sturdy_handle","qty":1},{"id":"resource_steel","qty":4},{"id":"component_leather_strap","qty":1}],"out":"tool_steel_axe","outQty":1,"places":"","live":false,"notes":"gate behind Toolmaking Notes"},{"id":"steel_pickaxe","name":"Steel Pickaxe","station":"workbench","secs":6,"inputs":[{"id":"component_sturdy_handle","qty":1},{"id":"resource_steel","qty":5},{"id":"component_leather_strap","qty":1}],"out":"tool_steel_pickaxe","outQty":1,"places":"","live":false,"notes":"gate behind Toolmaking Notes"},{"id":"claw_hammer","name":"Claw Hammer","station":"workbench","secs":4,"inputs":[{"id":"component_sturdy_handle","qty":1},{"id":"resource_scrap_iron","qty":2}],"out":"tool_claw_hammer","outQty":1,"places":"","live":false,"notes":""},{"id":"hunting_knife","name":"Hunting Knife","station":"workbench","secs":4,"inputs":[{"id":"resource_scrap_iron","qty":2},{"id":"component_leather_strap","qty":1}],"out":"tool_hunting_knife","outQty":1,"places":"","live":false,"notes":""},{"id":"oil_lantern","name":"Oil Lantern","station":"workbench","secs":5,"inputs":[{"id":"resource_glass","qty":2},{"id":"resource_scrap_iron","qty":2},{"id":"component_cord","qty":1}],"out":"tool_oil_lantern","outQty":1,"places":"","live":false,"notes":"burns oil"},{"id":"hoe","name":"Field Hoe","station":"workbench","secs":4,"inputs":[{"id":"component_sturdy_handle","qty":1},{"id":"resource_scrap_iron","qty":2}],"out":"tool_hoe","outQty":1,"places":"","live":false,"notes":""},{"id":"fishing_rod","name":"Fishing Rod","station":"","secs":3,"inputs":[{"id":"resource_wood","qty":3},{"id":"component_cord","qty":3},{"id":"resource_bone","qty":1}],"out":"tool_fishing_rod","outQty":1,"places":"","live":false,"notes":"bone hook"},{"id":"wooden_club","name":"Wooden Club","station":"","secs":2,"inputs":[{"id":"resource_wood","qty":5}],"out":"weapon_wooden_club","outQty":1,"places":"","live":false,"notes":""},{"id":"spiked_club","name":"Spiked Club","station":"workbench","secs":3,"inputs":[{"id":"weapon_wooden_club","qty":1},{"id":"component_nails","qty":10},{"id":"component_leather_strap","qty":1}],"out":"weapon_spiked_club","outQty":1,"places":"","live":false,"notes":"upgrade path"},{"id":"wooden_spear","name":"Wooden Spear","station":"","secs":2,"inputs":[{"id":"resource_wood","qty":3},{"id":"resource_stone","qty":1},{"id":"component_cord","qty":1}],"out":"weapon_wooden_spear","outQty":1,"places":"","live":false,"notes":""},{"id":"iron_spear","name":"Iron Spear","station":"workbench","secs":4,"inputs":[{"id":"resource_wood","qty":3},{"id":"resource_scrap_iron","qty":3},{"id":"component_cord","qty":1}],"out":"weapon_iron_spear","outQty":1,"places":"","live":false,"notes":""},{"id":"machete","name":"Machete","station":"workbench","secs":6,"inputs":[{"id":"resource_steel","qty":3},{"id":"component_leather_strap","qty":1}],"out":"weapon_machete","outQty":1,"places":"","live":false,"notes":""},{"id":"fire_axe","name":"Fire Axe","station":"workbench","secs":6,"inputs":[{"id":"resource_steel","qty":4},{"id":"component_sturdy_handle","qty":1}],"out":"weapon_fire_axe","outQty":1,"places":"","live":false,"notes":""},{"id":"sledgehammer","name":"Sledgehammer","station":"workbench","secs":6,"inputs":[{"id":"resource_steel","qty":6},{"id":"component_sturdy_handle","qty":1}],"out":"weapon_sledgehammer","outQty":1,"places":"","live":false,"notes":""},{"id":"brass_knuckles","name":"Brass Knuckles","station":"forge","secs":4,"inputs":[{"id":"resource_brass","qty":4}],"out":"weapon_brass_knuckles","outQty":1,"places":"","live":false,"notes":""},{"id":"wooden_bow","name":"Wooden Bow","station":"","secs":3,"inputs":[{"id":"resource_wood","qty":4},{"id":"component_cord","qty":2}],"out":"weapon_wooden_bow","outQty":1,"places":"","live":false,"notes":""},{"id":"recurve_bow","name":"Recurve Bow","station":"workbench","secs":5,"inputs":[{"id":"resource_wood","qty":6},{"id":"component_cord","qty":3},{"id":"component_leather_strap","qty":2}],"out":"weapon_recurve_bow","outQty":1,"places":"","live":false,"notes":""},{"id":"crossbow","name":"Crossbow","station":"workbench","secs":6,"inputs":[{"id":"resource_wood","qty":5},{"id":"resource_scrap_iron","qty":3},{"id":"component_spring","qty":1},{"id":"component_cord","qty":2}],"out":"weapon_crossbow","outQty":1,"places":"","live":false,"notes":""},{"id":"zip_gun","name":"Zip Gun","station":"workbench","secs":5,"inputs":[{"id":"component_pipe","qty":2},{"id":"resource_wood","qty":2},{"id":"component_spring","qty":1},{"id":"component_duct_tape","qty":1}],"out":"weapon_zip_gun","outQty":1,"places":"","live":false,"notes":"first firearm"},{"id":"revolver","name":"Revolver","station":"workbench","secs":8,"inputs":[{"id":"resource_scrap_iron","qty":6},{"id":"component_spring","qty":2},{"id":"component_sturdy_handle","qty":1}],"out":"weapon_revolver","outQty":1,"places":"","live":false,"notes":"gate behind Gun Repair Manual"},{"id":"stone_arrows","name":"Stone Arrows","station":"","secs":2,"inputs":[{"id":"resource_wood","qty":2},{"id":"resource_stone","qty":2},{"id":"resource_fiber","qty":1}],"out":"ammo_stone_arrow","outQty":5,"places":"","live":false,"notes":""},{"id":"iron_arrows","name":"Iron Arrows","station":"workbench","secs":2,"inputs":[{"id":"resource_wood","qty":2},{"id":"resource_scrap_iron","qty":1},{"id":"resource_fiber","qty":1}],"out":"ammo_iron_arrow","outQty":5,"places":"","live":false,"notes":""},{"id":"crossbow_bolts","name":"Crossbow Bolts","station":"workbench","secs":2,"inputs":[{"id":"resource_wood","qty":2},{"id":"resource_scrap_iron","qty":1}],"out":"ammo_crossbow_bolt","outQty":5,"places":"","live":false,"notes":""},{"id":"pistol_rounds","name":"Pistol Rounds","station":"workbench","secs":4,"inputs":[{"id":"component_brass_casing","qty":10},{"id":"component_lead_slug","qty":10},{"id":"component_gunpowder","qty":2}],"out":"ammo_pistol_rounds","outQty":10,"places":"","live":false,"notes":"gate behind Gun Repair Manual"},{"id":"rifle_rounds","name":"Rifle Rounds","station":"workbench","secs":4,"inputs":[{"id":"component_brass_casing","qty":10},{"id":"component_lead_slug","qty":10},{"id":"component_gunpowder","qty":3}],"out":"ammo_rifle_rounds","outQty":10,"places":"","live":false,"notes":"gate behind Gun Repair Manual"},{"id":"shotgun_shells","name":"Shotgun Shells","station":"workbench","secs":4,"inputs":[{"id":"resource_plastic","qty":2},{"id":"component_lead_slug","qty":12},{"id":"component_gunpowder","qty":3}],"out":"ammo_shotgun_shells","outQty":6,"places":"","live":false,"notes":"gate behind Gun Repair Manual"},{"id":"cooked_meat","name":"Cooked Meat","station":"campfire","secs":3,"inputs":[{"id":"food_raw_meat","qty":1},{"id":"resource_wood","qty":1}],"out":"food_cooked_meat","outQty":1,"places":"","live":false,"notes":""},{"id":"cooked_fish","name":"Cooked Fish","station":"campfire","secs":3,"inputs":[{"id":"food_raw_fish","qty":1},{"id":"resource_wood","qty":1}],"out":"food_cooked_fish","outQty":1,"places":"","live":false,"notes":""},{"id":"boiled_egg","name":"Boiled Egg","station":"campfire","secs":2,"inputs":[{"id":"food_egg","qty":1},{"id":"resource_wood","qty":1}],"out":"food_boiled_egg","outQty":1,"places":"","live":false,"notes":""},{"id":"roasted_mushrooms","name":"Roasted Mushrooms","station":"campfire","secs":2,"inputs":[{"id":"food_mushrooms","qty":2},{"id":"resource_wood","qty":1}],"out":"food_roasted_mushrooms","outQty":1,"places":"","live":false,"notes":""},{"id":"jerky","name":"Jerky","station":"campfire","secs":6,"inputs":[{"id":"food_raw_meat","qty":2},{"id":"resource_wood","qty":2}],"out":"food_jerky","outQty":2,"places":"","live":false,"notes":"slow smoke"},{"id":"porridge","name":"Porridge","station":"campfire","secs":3,"inputs":[{"id":"food_wild_grain","qty":3},{"id":"drink_boiled_water","qty":1}],"out":"food_porridge","outQty":1,"places":"","live":false,"notes":""},{"id":"flatbread","name":"Flatbread","station":"campfire","secs":3,"inputs":[{"id":"food_wild_grain","qty":4},{"id":"resource_wood","qty":1}],"out":"food_flatbread","outQty":1,"places":"","live":false,"notes":""},{"id":"meat_stew","name":"Meat Stew","station":"campfire","secs":5,"inputs":[{"id":"food_raw_meat","qty":2},{"id":"food_potato","qty":1},{"id":"food_wild_onion","qty":1},{"id":"drink_boiled_water","qty":1}],"out":"food_meat_stew","outQty":1,"places":"","live":false,"notes":"best early food"},{"id":"vegetable_soup","name":"Vegetable Soup","station":"campfire","secs":5,"inputs":[{"id":"food_potato","qty":1},{"id":"food_carrot","qty":1},{"id":"food_wild_onion","qty":1},{"id":"drink_boiled_water","qty":1}],"out":"food_vegetable_soup","outQty":1,"places":"","live":false,"notes":""},{"id":"berry_jam","name":"Berry Jam","station":"campfire","secs":4,"inputs":[{"id":"food_blueberries","qty":5},{"id":"misc_glass_jar","qty":1},{"id":"resource_wood","qty":2}],"out":"food_berry_jam","outQty":1,"places":"","live":false,"notes":""},{"id":"trail_mix","name":"Trail Mix","station":"","secs":2,"inputs":[{"id":"food_blueberries","qty":3},{"id":"food_raspberries","qty":3},{"id":"food_acorns","qty":5}],"out":"food_trail_mix","outQty":2,"places":"","live":false,"notes":"no fire needed"},{"id":"boiled_water","name":"Boiled Water","station":"campfire","secs":3,"inputs":[{"id":"drink_murky_water","qty":1},{"id":"resource_wood","qty":1}],"out":"drink_boiled_water","outQty":1,"places":"","live":false,"notes":"the water loop"},{"id":"pine_tea","name":"Pine Needle Tea","station":"campfire","secs":3,"inputs":[{"id":"drink_boiled_water","qty":1},{"id":"resource_resin","qty":1}],"out":"drink_pine_tea","outQty":1,"places":"","live":false,"notes":"needles TBD as harvestable; resin stands in"},{"id":"bone_broth","name":"Bone Broth","station":"campfire","secs":4,"inputs":[{"id":"resource_bone","qty":2},{"id":"drink_boiled_water","qty":1}],"out":"drink_bone_broth","outQty":1,"places":"","live":false,"notes":""},{"id":"waterskin","name":"Filled Waterskin","station":"workbench","secs":4,"inputs":[{"id":"resource_leather","qty":2},{"id":"component_cord","qty":1},{"id":"drink_boiled_water","qty":2}],"out":"drink_waterskin","outQty":1,"places":"","live":false,"notes":"portable water"},{"id":"bandage","name":"Bandage","station":"","secs":2,"inputs":[{"id":"resource_cloth","qty":1}],"out":"medical_bandage","outQty":1,"places":"","live":false,"notes":"hand craft anywhere"},{"id":"clean_bandage","name":"Clean Bandage","station":"campfire","secs":3,"inputs":[{"id":"medical_bandage","qty":1},{"id":"drink_boiled_water","qty":1}],"out":"medical_clean_bandage","outQty":1,"places":"","live":false,"notes":""},{"id":"honey_dressing","name":"Honey Dressing","station":"","secs":2,"inputs":[{"id":"medical_bandage","qty":1},{"id":"food_honey","qty":1}],"out":"medical_honey_dressing","outQty":1,"places":"","live":false,"notes":""},{"id":"poultice","name":"Herb Poultice","station":"apothecary_table","secs":4,"inputs":[{"id":"resource_yarrow","qty":3},{"id":"resource_cloth","qty":1}],"out":"medical_poultice","outQty":1,"places":"","live":false,"notes":""},{"id":"splint","name":"Splint","station":"","secs":2,"inputs":[{"id":"resource_wood","qty":2},{"id":"resource_cloth","qty":2}],"out":"medical_splint","outQty":1,"places":"","live":false,"notes":""},{"id":"antiseptic","name":"Antiseptic","station":"apothecary_table","secs":5,"inputs":[{"id":"resource_resin","qty":2},{"id":"drink_boiled_water","qty":1},{"id":"misc_glass_jar","qty":1}],"out":"medical_antiseptic","outQty":1,"places":"","live":false,"notes":"pine resin antiseptic"},{"id":"fever_tonic","name":"Fever Tonic","station":"apothecary_table","secs":5,"inputs":[{"id":"resource_feverfew","qty":3},{"id":"drink_boiled_water","qty":1},{"id":"misc_glass_jar","qty":1}],"out":"medical_fever_tonic","outQty":1,"places":"","live":false,"notes":"gate behind Medicine Journal"},{"id":"plague_tincture","name":"Plague Tincture","station":"apothecary_table","secs":8,"inputs":[{"id":"trophy_blight_gland","qty":1},{"id":"medical_fever_tonic","qty":1},{"id":"medical_antiseptic","qty":1}],"out":"medical_plague_tincture","outQty":1,"places":"","live":false,"notes":"endgame; gate behind Medicine Journal"},{"id":"padded_jacket","name":"Padded Jacket","station":"workbench","secs":4,"inputs":[{"id":"resource_cloth","qty":6},{"id":"component_cord","qty":2}],"out":"armor_padded_jacket","outQty":1,"places":"","live":false,"notes":""},{"id":"padded_pants","name":"Padded Pants","station":"workbench","secs":4,"inputs":[{"id":"resource_cloth","qty":5},{"id":"component_cord","qty":2}],"out":"armor_padded_pants","outQty":1,"places":"","live":false,"notes":""},{"id":"leather_jacket","name":"Leather Jacket","station":"tanning_rack","secs":5,"inputs":[{"id":"resource_leather","qty":6},{"id":"component_cord","qty":2}],"out":"armor_leather_jacket","outQty":1,"places":"","live":false,"notes":""},{"id":"leather_pants","name":"Leather Pants","station":"tanning_rack","secs":5,"inputs":[{"id":"resource_leather","qty":5},{"id":"component_cord","qty":2}],"out":"armor_leather_pants","outQty":1,"places":"","live":false,"notes":""},{"id":"leather_boots","name":"Leather Boots","station":"tanning_rack","secs":4,"inputs":[{"id":"resource_leather","qty":3},{"id":"component_cord","qty":1}],"out":"armor_leather_boots","outQty":1,"places":"","live":false,"notes":""},{"id":"leather_gloves","name":"Leather Gloves","station":"tanning_rack","secs":3,"inputs":[{"id":"resource_leather","qty":2},{"id":"component_cord","qty":1}],"out":"armor_leather_gloves","outQty":1,"places":"","live":false,"notes":""},{"id":"scrap_vest","name":"Scrap Plate Vest","station":"workbench","secs":6,"inputs":[{"id":"armor_leather_jacket","qty":1},{"id":"resource_scrap_iron","qty":6},{"id":"component_leather_strap","qty":2}],"out":"armor_scrap_vest","outQty":1,"places":"","live":false,"notes":"gate behind Armor Patterns"},{"id":"scrap_helmet","name":"Scrap Helmet","station":"workbench","secs":5,"inputs":[{"id":"resource_scrap_iron","qty":4},{"id":"resource_cloth","qty":2},{"id":"component_leather_strap","qty":1}],"out":"armor_scrap_helmet","outQty":1,"places":"","live":false,"notes":"gate behind Armor Patterns"},{"id":"filter_mask","name":"Filter Mask","station":"workbench","secs":6,"inputs":[{"id":"component_filter_wadding","qty":2},{"id":"resource_cloth","qty":2},{"id":"component_leather_strap","qty":2},{"id":"resource_glass","qty":1}],"out":"armor_filter_mask","outQty":1,"places":"","live":false,"notes":"plague zones later"},{"id":"rain_poncho","name":"Rain Poncho","station":"","secs":3,"inputs":[{"id":"resource_cloth","qty":4},{"id":"resource_tallow","qty":2}],"out":"armor_rain_poncho","outQty":1,"places":"","live":false,"notes":"waxed cloth"},{"id":"wool_cap","name":"Wool Cap","station":"","secs":3,"inputs":[{"id":"resource_cloth","qty":3},{"id":"component_cord","qty":1}],"out":"armor_wool_cap","outQty":1,"places":"","live":false,"notes":""},{"id":"seed_potato","name":"Seed Potato","station":"","secs":2,"inputs":[{"id":"food_potato","qty":2}],"out":"seed_potato","outQty":1,"places":"","live":false,"notes":"gate behind Farming Almanac"},{"id":"carrot_seeds","name":"Carrot Seeds","station":"","secs":2,"inputs":[{"id":"food_carrot","qty":2}],"out":"seed_carrot","outQty":2,"places":"","live":false,"notes":"gate behind Farming Almanac"},{"id":"onion_sets","name":"Onion Sets","station":"","secs":2,"inputs":[{"id":"food_wild_onion","qty":2}],"out":"seed_onion","outQty":2,"places":"","live":false,"notes":"gate behind Farming Almanac"},{"id":"grain_seed","name":"Grain Seed","station":"","secs":2,"inputs":[{"id":"food_wild_grain","qty":4}],"out":"seed_grain","outQty":2,"places":"","live":false,"notes":"gate behind Farming Almanac"},{"id":"berry_cutting","name":"Berry Cutting","station":"","secs":2,"inputs":[{"id":"food_blueberries","qty":4},{"id":"resource_wood","qty":1}],"out":"seed_berry_cutting","outQty":1,"places":"","live":false,"notes":"gate behind Farming Almanac"}],"loot":[{"table":"crate_household","item":"food_apple","weight":5,"min":1,"max":3,"gs":0,"live":true},{"table":"crate_household","item":"food_blueberries","weight":5,"min":2,"max":5,"gs":0,"live":true},{"table":"crate_household","item":"food_baked_apple","weight":2,"min":1,"max":2,"gs":0,"live":true},{"table":"crate_household","item":"drink_fruit_tea","weight":2,"min":1,"max":1,"gs":0,"live":true},{"table":"crate_household","item":"resource_fiber","weight":3,"min":2,"max":6,"gs":0,"live":true},{"table":"crate_household","item":"medical_herbal_remedy","weight":1,"min":1,"max":1,"gs":10,"live":true},{"table":"crate_supply","item":"resource_wood","weight":5,"min":5,"max":15,"gs":0,"live":true},{"table":"crate_supply","item":"resource_stone","weight":5,"min":5,"max":15,"gs":0,"live":true},{"table":"crate_supply","item":"resource_fiber","weight":3,"min":3,"max":8,"gs":0,"live":true},{"table":"crate_supply","item":"resource_iron_ore","weight":2,"min":2,"max":6,"gs":10,"live":true},{"table":"crate_supply","item":"resource_coal","weight":2,"min":2,"max":6,"gs":10,"live":true},{"table":"crate_supply","item":"resource_saltpeter","weight":1,"min":1,"max":4,"gs":20,"live":true},{"table":"crate_supply","item":"resource_steel","weight":1,"min":1,"max":3,"gs":30,"live":true},{"table":"crate_household","item":"weapon_kitchen_knife","weight":2,"min":1,"max":1,"gs":0,"live":false},{"table":"crate_household","item":"misc_old_clothes","weight":4,"min":1,"max":3,"gs":0,"live":false},{"table":"crate_household","item":"misc_matches","weight":2,"min":1,"max":2,"gs":0,"live":false},{"table":"crate_household","item":"food_canned_beans","weight":3,"min":1,"max":2,"gs":0,"live":false},{"table":"crate_household","item":"drink_old_soda","weight":2,"min":1,"max":2,"gs":0,"live":false},{"table":"crate_supply","item":"component_nails","weight":2,"min":5,"max":15,"gs":0,"live":false},{"table":"crate_supply","item":"component_duct_tape","weight":2,"min":1,"max":3,"gs":0,"live":false},{"table":"crate_supply","item":"resource_scrap_iron","weight":3,"min":2,"max":8,"gs":5,"live":false}],"stats":[{"id":"tool_stone_axe","dmg":8,"apm":55,"dur":100,"armor":0,"harvest":1,"notes":"starter chopper"},{"id":"tool_iron_axe","dmg":12,"apm":55,"dur":250,"armor":0,"harvest":2,"notes":""},{"id":"tool_steel_axe","dmg":16,"apm":55,"dur":500,"armor":0,"harvest":3,"notes":""},{"id":"tool_stone_pickaxe","dmg":7,"apm":50,"dur":100,"armor":0,"harvest":1,"notes":""},{"id":"tool_iron_pickaxe","dmg":11,"apm":50,"dur":250,"armor":0,"harvest":2,"notes":""},{"id":"tool_steel_pickaxe","dmg":15,"apm":50,"dur":500,"armor":0,"harvest":3,"notes":""},{"id":"tool_wooden_shovel","dmg":5,"apm":55,"dur":80,"armor":0,"harvest":1,"notes":""},{"id":"tool_iron_shovel","dmg":9,"apm":55,"dur":220,"armor":0,"harvest":2,"notes":""},{"id":"tool_claw_hammer","dmg":6,"apm":60,"dur":200,"armor":0,"harvest":1,"notes":"build/repair tool first"},{"id":"tool_pipe_wrench","dmg":9,"apm":60,"dur":250,"armor":0,"harvest":1,"notes":"salvage bonus"},{"id":"tool_ratchet_kit","dmg":4,"apm":70,"dur":300,"armor":0,"harvest":1,"notes":"salvage specialist"},{"id":"tool_hunting_knife","dmg":10,"apm":90,"dur":150,"armor":0,"harvest":1,"notes":"butcher yield bonus"},{"id":"tool_torch","dmg":3,"apm":50,"dur":30,"armor":0,"harvest":0,"notes":"burns out; scares animals later"},{"id":"tool_oil_lantern","dmg":0,"apm":0,"dur":200,"armor":0,"harvest":0,"notes":"light only"},{"id":"tool_hoe","dmg":4,"apm":50,"dur":150,"armor":0,"harvest":1,"notes":"tills plots"},{"id":"tool_fishing_rod","dmg":1,"apm":0,"dur":60,"armor":0,"harvest":0,"notes":""},{"id":"weapon_wooden_club","dmg":12,"apm":50,"dur":120,"armor":0,"harvest":0,"notes":""},{"id":"weapon_spiked_club","dmg":18,"apm":45,"dur":150,"armor":0,"harvest":0,"notes":""},{"id":"weapon_baseball_bat","dmg":16,"apm":55,"dur":200,"armor":0,"harvest":0,"notes":""},{"id":"weapon_wooden_spear","dmg":14,"apm":40,"dur":100,"armor":0,"harvest":0,"notes":"reach"},{"id":"weapon_iron_spear","dmg":20,"apm":40,"dur":220,"armor":0,"harvest":0,"notes":"reach"},{"id":"weapon_machete","dmg":24,"apm":70,"dur":260,"armor":0,"harvest":0,"notes":""},{"id":"weapon_fire_axe","dmg":30,"apm":35,"dur":280,"armor":0,"harvest":1,"notes":"chops in a pinch"},{"id":"weapon_sledgehammer","dmg":42,"apm":25,"dur":320,"armor":0,"harvest":2,"notes":"knockdown; wrecks blocks"},{"id":"weapon_crowbar","dmg":15,"apm":55,"dur":300,"armor":0,"harvest":1,"notes":"salvage bonus"},{"id":"weapon_kitchen_knife","dmg":8,"apm":100,"dur":80,"armor":0,"harvest":0,"notes":""},{"id":"weapon_pitchfork","dmg":15,"apm":45,"dur":160,"armor":0,"harvest":0,"notes":"reach"},{"id":"weapon_brass_knuckles","dmg":10,"apm":110,"dur":220,"armor":0,"harvest":0,"notes":""},{"id":"weapon_wooden_bow","dmg":22,"apm":25,"dur":120,"armor":0,"harvest":0,"notes":"silent"},{"id":"weapon_recurve_bow","dmg":32,"apm":28,"dur":200,"armor":0,"harvest":0,"notes":"silent"},{"id":"weapon_crossbow","dmg":45,"apm":12,"dur":240,"armor":0,"harvest":0,"notes":"silent; slow reload"},{"id":"weapon_zip_gun","dmg":30,"apm":10,"dur":80,"armor":0,"harvest":0,"notes":"single shot"},{"id":"weapon_revolver","dmg":35,"apm":60,"dur":300,"armor":0,"harvest":0,"notes":""},{"id":"weapon_double_barrel","dmg":60,"apm":30,"dur":280,"armor":0,"harvest":0,"notes":"two then reload"},{"id":"weapon_pump_shotgun","dmg":55,"apm":45,"dur":350,"armor":0,"harvest":0,"notes":""},{"id":"weapon_hunting_rifle","dmg":65,"apm":20,"dur":350,"armor":0,"harvest":0,"notes":""},{"id":"weapon_lever_rifle","dmg":45,"apm":40,"dur":330,"armor":0,"harvest":0,"notes":""},{"id":"armor_padded_jacket","dmg":0,"apm":0,"dur":100,"armor":2,"harvest":0,"notes":""},{"id":"armor_padded_pants","dmg":0,"apm":0,"dur":90,"armor":2,"harvest":0,"notes":""},{"id":"armor_leather_jacket","dmg":0,"apm":0,"dur":180,"armor":4,"harvest":0,"notes":""},{"id":"armor_leather_pants","dmg":0,"apm":0,"dur":160,"armor":3,"harvest":0,"notes":""},{"id":"armor_leather_boots","dmg":0,"apm":0,"dur":140,"armor":2,"harvest":0,"notes":""},{"id":"armor_leather_gloves","dmg":0,"apm":0,"dur":120,"armor":1,"harvest":0,"notes":""},{"id":"armor_scrap_vest","dmg":0,"apm":0,"dur":260,"armor":8,"harvest":0,"notes":"heavy"},{"id":"armor_scrap_helmet","dmg":0,"apm":0,"dur":220,"armor":5,"harvest":0,"notes":""},{"id":"armor_mining_helmet","dmg":0,"apm":0,"dur":200,"armor":4,"harvest":0,"notes":"head lamp"},{"id":"armor_work_boots","dmg":0,"apm":0,"dur":180,"armor":3,"harvest":0,"notes":""},{"id":"armor_rain_poncho","dmg":0,"apm":0,"dur":80,"armor":1,"harvest":0,"notes":"weather layer"},{"id":"armor_wool_cap","dmg":0,"apm":0,"dur":70,"armor":1,"harvest":0,"notes":"cold layer"},{"id":"armor_filter_mask","dmg":0,"apm":0,"dur":150,"armor":2,"harvest":0,"notes":"plague filter"},{"id":"armor_denim_jacket","dmg":0,"apm":0,"dur":100,"armor":1,"harvest":0,"notes":""}],"ideas":[{"id":"idea_screamer","name":"Screamer","notes":"A gaunt zombie that shrieks when it spots you - draws every zombie in earshot toward your position. Kill it fast or the horde swells around you."},{"id":"idea_bloat","name":"Bloat","notes":"Swollen and slow; bursts into a lingering toxic cloud when killed. Punishes melee - shoot it from range or back off before it pops."}],"generated":"2026-07-18 16:35"};
+const LS_KEY = "malady-design-edits-v2";
+
+const CAT_LABELS = {
+  resource: "Resources", component: "Components", food: "Food", drink: "Drinks",
+  medical: "Medical", tool: "Tools", weapon_melee: "Melee Weapons",
+  weapon_ranged: "Ranged Weapons", ammo: "Ammo", armor: "Armor & Clothing",
+  seed: "Seeds & Farming", schematic: "Schematics", workstation: "Workstations",
+  furniture: "Furniture", decoration: "Decoration",
+  misc: "Miscellany", trophy: "Trophies", currency: "Currency"
+};
+const CAT_ORDER = Object.keys(CAT_LABELS);
+const CAT_PREFIX = {
+  resource: "resource_", component: "component_", food: "food_", drink: "drink_",
+  medical: "medical_", tool: "tool_", weapon_melee: "weapon_", weapon_ranged: "weapon_",
+  ammo: "ammo_", armor: "armor_", seed: "seed_", schematic: "schematic_",
+  workstation: "", furniture: "furniture_", decoration: "decor_",
+  misc: "misc_", trophy: "trophy_", currency: "currency_"
+};
+const EQUIP_CATS = new Set(["tool", "weapon_melee", "weapon_ranged", "armor"]);
+// The station a recipe can be assigned to = any Workstations-category item.
+function workstationItems() { return items.filter(i => i.cat === "workstation"); }
+
+function loadEdits() {
+  let e = null;
+  try { e = JSON.parse(localStorage.getItem(LS_KEY)); } catch (err) {}
+  if (!e || !e.items) e = { items: {}, recipes: {}, deletedRecipes: [], stats: {}, loot: {} };
+  e.ideas = e.ideas || {};            // migrate saves from before the idea board
+  e.deletedIdeas = e.deletedIdeas || [];
+  return e;
+}
+let EDITS = loadEdits();
+function persist() { localStorage.setItem(LS_KEY, JSON.stringify(EDITS)); refreshHead(); }
+function editCount() {
+  return Object.keys(EDITS.items).length + Object.keys(EDITS.recipes).length +
+    Object.keys(EDITS.stats).length + Object.keys(EDITS.loot).length + EDITS.deletedRecipes.length +
+    Object.keys(EDITS.ideas).length + EDITS.deletedIdeas.length;
+}
+
+let items, byId, recipes, recipeById, loot, statsById, madeBy, usedIn, lootedFrom, stations, containers, ideas;
+function push(map, k, v) { if (!map.has(k)) map.set(k, []); map.get(k).push(v); }
+function rebuild() {
+  const im = new Map(DATA.items.map(i => [i.id, i]));
+  for (const [id, it] of Object.entries(EDITS.items)) im.set(id, it);
+  byId = im; items = [...im.values()];
+  const rm = new Map(DATA.recipes.map(r => [r.id, r]));
+  for (const [id, r] of Object.entries(EDITS.recipes)) rm.set(id, r);
+  for (const id of EDITS.deletedRecipes) rm.delete(id);
+  recipeById = rm; recipes = [...rm.values()];
+  const lm = new Map();
+  for (const l of DATA.loot) push(lm, l.item, l);
+  for (const [iid, rows] of Object.entries(EDITS.loot)) lm.set(iid, rows.map(r => ({ ...r, item: iid })));
+  loot = [];
+  for (const rows of lm.values()) loot.push(...rows);
+  statsById = new Map((DATA.stats || []).map(s => [s.id, s]));
+  for (const [id, s] of Object.entries(EDITS.stats)) statsById.set(id, s);
+  madeBy = new Map(); usedIn = new Map(); lootedFrom = new Map();
+  for (const r of recipes) {
+    if (r.out) push(madeBy, r.out, r);
+    else if (r.places) push(madeBy, r.places, r); // craft-to-place: shows on the workstation item's page
+    for (const inp of r.inputs) push(usedIn, inp.id, r);
+  }
+  for (const l of loot) push(lootedFrom, l.item, l);
+  stations = [...new Set(recipes.flatMap(r => [r.station, r.places]).filter(Boolean))].sort();
+  containers = [...new Set(loot.map(l => l.table))].sort();
+  const idm = new Map((DATA.ideas || []).map(i => [i.id, i]));
+  for (const [id, v] of Object.entries(EDITS.ideas)) idm.set(id, v);
+  for (const id of EDITS.deletedIdeas) idm.delete(id);
+  ideas = [...idm.values()];
+}
+
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const num = v => { const n = parseFloat(v); return isFinite(n) ? n : 0; };
+
+function itemLink(id, qty) {
+  const it = byId.get(id);
+  const q = qty ? ` <span class="qty">×${qty}</span>` : "";
+  if (!it) return `<span class="missing" title="id not defined — fix or create the item">${esc(id)}</span>${q}`;
+  return `<a href="#item/${esc(id)}">${esc(it.name)}</a>${q}`;
+}
+function tierChip(t) { return `<span class="chip t${t}">Tier ${t}</span>`; }
+function statusChip(entity, kind) {
+  const edited = kind === "item" ? EDITS.items[entity.id] : kind === "recipe" ? EDITS.recipes[entity.id] : null;
+  if (edited) return '<span class="chip edited">edited</span>';
+  return entity.live ? '<span class="chip live">LIVE</span>' : '<span class="chip">draft</span>';
+}
+
+function itemOptions(selected) {
+  let html = "";
+  for (const cat of CAT_ORDER) {
+    const list = items.filter(i => i.cat === cat);
+    if (!list.length) continue;
+    html += `<optgroup label="${esc(CAT_LABELS[cat])}">` + list.map(i =>
+      `<option value="${esc(i.id)}"${i.id === selected ? " selected" : ""}>${esc(i.name)}</option>`).join("") + `</optgroup>`;
+  }
+  return html;
+}
+
+/* ---------- edit drafts ---------- */
+let draft = null;
+
+function setDraftField(path, value) {
+  const parts = path.split(".");
+  let obj = draft;
+  for (let i = 0; i < parts.length - 1; i++) obj = obj[parts[i]];
+  obj[parts[parts.length - 1]] = value;
+}
+
+function recipeCard(r, editable) {
+  if (draft && draft.kind === "recipe" && draft.editId === r.id) return recipeForm();
+  const stnName = r.station ? (byId.get(r.station)?.name || r.station) : "";
+  const stn = r.station ? `<a href="#station/${esc(r.station)}" class="chip">${esc(stnName)}</a>` : `<span class="chip">by hand</span>`;
+  const rows = r.inputs.map(i => `<tr><td>${itemLink(i.id)}</td><td class="q">${i.qty}</td></tr>`).join("");
+  const out = r.places
+    ? `<span class="chip">places: ${esc(r.places)}</span>`
+    : itemLink(r.out, r.outQty > 1 ? r.outQty : 0);
+  return `<div class="rcard">
+    <div class="rhead"><span class="rname">${esc(r.name)}</span>${stn}
+      <span class="meta">${r.secs}s</span>${statusChip(r, "recipe")}
+      ${r.notes ? `<span class="meta">— ${esc(r.notes)}</span>` : ""}
+      ${editable ? `<button class="btn mini" data-action="edit-recipe" data-rid="${esc(r.id)}">Edit</button>` : ""}</div>
+    <table class="rin">${rows}</table>
+    <div class="rout">→ ${out}</div>
+  </div>`;
+}
+
+function recipeForm() {
+  const d = draft;
+  const ingRows = d.inputs.map((inp, idx) => `
+    <div class="ingrow">
+      <select data-dfield="inputs.${idx}.id">${itemOptions(inp.id)}</select>
+      <input class="qtyin" type="number" min="1" value="${inp.qty}" data-dfield="inputs.${idx}.qty" aria-label="quantity">
+      <button class="btn mini danger" data-action="del-ing" data-idx="${idx}">×</button>
+    </div>`).join("");
+  return `<div class="editform">
+    <div class="formtitle">${d.editId ? "Edit recipe" : "New recipe"} — makes ${esc(byId.get(d.out)?.name || d.out)}</div>
+    <div class="formgrid">
+      <div class="field"><label>Recipe name</label><input value="${esc(d.name)}" data-dfield="name"></div>
+      <div class="field"><label>Station</label><select data-dfield="station">
+        <option value="">by hand</option>${workstationItems().map(w => `<option value="${esc(w.id)}"${w.id === d.station ? " selected" : ""}>${esc(w.name)}</option>`).join("")}
+      </select></div>
+      <div class="field"><label>Craft seconds</label><input type="number" min="1" value="${d.secs}" data-dfield="secs"></div>
+      <div class="field"><label>Output qty</label><input type="number" min="1" value="${d.outQty}" data-dfield="outQty"></div>
+      <div class="field wide"><label>Notes</label><input value="${esc(d.notes)}" data-dfield="notes"></div>
+    </div>
+    <div class="ingrows">${ingRows}</div>
+    <button class="btn mini" data-action="add-ing">+ ingredient</button>
+    <div class="formactions">
+      <button class="btn primary" data-action="save-recipe">Save</button>
+      <button class="btn" data-action="cancel-edit">Cancel</button>
+      ${d.editId ? `<button class="btn danger" data-action="del-recipe">Delete recipe</button>` : ""}
+    </div>
+  </div>`;
+}
+
+function lootSection(itemId) {
+  if (draft && draft.kind === "loot" && draft.itemId === itemId) return lootForm();
+  const lf = lootedFrom.get(itemId) || [];
+  const totals = {};
+  for (const l of loot) totals[l.table] = (totals[l.table] || 0) + l.weight;
+  if (!lf.length) return '<p class="empty">Not distributed anywhere yet — hit Edit and put it in a container.</p>';
+  return `<div class="tablewrap"><table class="list">
+    <tr><th>Container</th><th class="num">Weight</th><th class="num">Roll chance</th><th class="num">Qty</th><th class="num">Min gamestage</th></tr>
+    ${lf.map(l => `<tr><td>${esc(l.table)}</td><td class="num">${l.weight}</td>
+      <td class="num">${totals[l.table] ? Math.round(l.weight / totals[l.table] * 100) : 0}%</td>
+      <td class="num">${l.min}–${l.max}</td><td class="num">${l.gs}</td></tr>`).join("")}
+  </table></div>`;
+}
+
+function lootForm() {
+  const d = draft;
+  const rows = d.rows.map((r, idx) => `
+    <div class="ingrow">
+      <input class="tblin" list="containers" value="${esc(r.table)}" placeholder="container id" data-dfield="rows.${idx}.table">
+      <input class="qtyin" type="number" min="1" value="${r.weight}" title="weight" data-dfield="rows.${idx}.weight">
+      <input class="qtyin" type="number" min="0" value="${r.min}" title="min qty" data-dfield="rows.${idx}.min">
+      <input class="qtyin" type="number" min="0" value="${r.max}" title="max qty" data-dfield="rows.${idx}.max">
+      <input class="qtyin" type="number" min="0" value="${r.gs}" title="min gamestage" data-dfield="rows.${idx}.gs">
+      <button class="btn mini danger" data-action="del-lootrow" data-idx="${idx}">×</button>
+    </div>`).join("");
+  return `<div class="editform">
+    <div class="formtitle">Distribution — container / weight / min qty / max qty / min gamestage</div>
+    <datalist id="containers">${containers.map(c => `<option value="${esc(c)}">`).join("")}</datalist>
+    <div class="ingrows">${rows || '<p class="empty">No rows — add one.</p>'}</div>
+    <button class="btn mini" data-action="add-lootrow">+ container</button>
+    <div class="formactions">
+      <button class="btn primary" data-action="save-loot">Save</button>
+      <button class="btn" data-action="cancel-edit">Cancel</button>
+    </div>
+  </div>`;
+}
+
+function equipStatsSection(it) {
+  if (draft && draft.kind === "stats" && draft.itemId === it.id) return statsForm(it);
+  const s = statsById.get(it.id);
+  if (!s) return '<p class="empty">No stats yet — hit Edit to set them.</p>';
+  const ranged = it.cat === "weapon_ranged";
+  let cells = "";
+  if (it.cat !== "armor") {
+    cells += statCell("Damage", s.dmg);
+    cells += statCell(ranged ? "Rounds / min" : "Swings / min", s.apm);
+  }
+  if (it.cat === "armor") cells += statCell("Armor rating", s.armor);
+  cells += statCell("Durability", s.dur);
+  if ((it.cat === "tool" || it.cat === "weapon_melee") && s.harvest) cells += statCell("Harvest power", s.harvest);
+  return `<div class="statgrid">${cells}</div>${s.notes ? `<p class="notes">${esc(s.notes)}</p>` : ""}`;
+}
+
+function statsForm(it) {
+  const d = draft, ranged = it.cat === "weapon_ranged", armor = it.cat === "armor";
+  return `<div class="editform">
+    <div class="formtitle">Edit stats — ${esc(it.name)}</div>
+    <div class="formgrid">
+      ${armor ? "" : `<div class="field"><label>Damage</label><input type="number" min="0" value="${d.dmg}" data-dfield="dmg"></div>
+      <div class="field"><label>${ranged ? "Rounds / min" : "Swings / min"}</label><input type="number" min="0" value="${d.apm}" data-dfield="apm"></div>`}
+      ${armor ? `<div class="field"><label>Armor rating</label><input type="number" min="0" value="${d.armor}" data-dfield="armor"></div>` : ""}
+      <div class="field"><label>Durability</label><input type="number" min="0" value="${d.dur}" data-dfield="dur"></div>
+      ${(it.cat === "tool" || it.cat === "weapon_melee") ? `<div class="field"><label>Harvest power</label><input type="number" min="0" value="${d.harvest}" data-dfield="harvest"></div>` : ""}
+      <div class="field wide"><label>Notes</label><input value="${esc(d.notes)}" data-dfield="notes"></div>
+    </div>
+    <div class="formactions">
+      <button class="btn primary" data-action="save-stats">Save</button>
+      <button class="btn" data-action="cancel-edit">Cancel</button>
+    </div>
+  </div>`;
+}
+
+function itemForm() {
+  const d = draft;
+  return `<div class="editform">
+    <div class="formtitle">${d.editId ? "Edit item" : "New item"} — ${esc(CAT_LABELS[d.cat])}</div>
+    <div class="formgrid">
+      <div class="field wide"><label>Display name</label><input value="${esc(d.name)}" data-dfield="name"></div>
+      <div class="field"><label>Tier (0–3)</label><input type="number" min="0" max="3" value="${d.tier}" data-dfield="tier"></div>
+      <div class="field"><label>Stack size</label><input type="number" min="1" value="${d.stack}" data-dfield="stack"></div>
+      <div class="field"><label>Weight kg</label><input type="number" min="0" step="0.1" value="${d.weight}" data-dfield="weight"></div>
+      <div class="field"><label>Scrap value</label><input type="number" min="0" value="${d.scrap}" data-dfield="scrap"></div>
+      <div class="field"><label>Food restore</label><input type="number" step="1" value="${d.food}" data-dfield="food"></div>
+      <div class="field"><label>Water restore</label><input type="number" step="1" value="${d.water}" data-dfield="water"></div>
+      <div class="field"><label>Health restore</label><input type="number" step="1" value="${d.health}" data-dfield="health"></div>
+      <div class="field wide"><label>Notes</label><input value="${esc(d.notes)}" data-dfield="notes"></div>
+      <div class="field wide"><label>Asset link (Fab / store URL, or /Game/… content path)</label><input value="${esc(d.asset)}" placeholder="https://…  or  /Game/Malady/…" data-dfield="asset"></div>
+    </div>
+    <div class="formactions">
+      <button class="btn primary" data-action="save-item">Save</button>
+      <button class="btn" data-action="cancel-edit">Cancel</button>
+    </div>
+  </div>`;
+}
+
+function statCell(k, v, unit) {
+  return `<div class="stat"><div class="k">${k}</div><div class="v">${v}${unit ? ` <small>${unit}</small>` : ""}</div></div>`;
+}
+
+// The profile's core properties, editable in place. Every input auto-saves the
+// moment you leave it (change event) — no Save button, no modal. The big
+// category list is a read-only mirror of exactly these values.
+function propsPanel(it) {
+  const consumable = ["food", "drink", "medical"].includes(it.cat) || it.food || it.water || it.health;
+  const p = (key, label, attrs) => `<label class="pfield"><span>${label}</span><input ${attrs} value="${esc(it[key] ?? 0)}" data-prop="${key}"></label>`;
+  const isUrl = /^https?:\/\//i.test((it.asset || "").trim());
+  return `<div class="props">
+    <div class="propgrid">
+      <label class="pfield"><span>Display name</span><input value="${esc(it.name)}" data-prop="name"></label>
+      ${p("tier", "Tier", 'type="number" min="0" max="3"')}
+      ${p("stack", "Stack", 'type="number" min="1"')}
+      ${p("weight", "Weight kg", 'type="number" min="0" step="0.1"')}
+      ${p("scrap", "Scrap value", 'type="number" min="0"')}
+      ${consumable ? p("food", "Food", 'type="number"') + p("water", "Water", 'type="number"') + p("health", "Health", 'type="number"') : ""}
+    </div>
+    <div class="propgrid" style="margin-top:8px">
+      <label class="pfield wide"><span>Notes</span><input value="${esc(it.notes || "")}" data-prop="notes"></label>
+      <label class="pfield wide"><span>Asset link (Fab / store URL, or /Game/… content path)</span><input value="${esc(it.asset || "")}" placeholder="https://…  or  /Game/Malady/…" data-prop="asset"></label>
+    </div>
+    ${isUrl ? `<div class="assetopen"><a href="${esc(it.asset)}" target="_blank" rel="noopener">open asset ↗</a></div>` : ""}
+    <p class="savehint">Changes save automatically to your browser as you leave each field — export when you're done.</p>
+  </div>`;
+}
+
+// Scrap yield: what one of this item breaks down into. A table like a recipe,
+// but reversed — inputs are this item, outputs are the salvage.
+function scrapSection(it) {
+  if (draft && draft.kind === "scrap" && draft.itemId === it.id) return scrapForm();
+  const y = it.scrapYield || [];
+  if (!y.length) return '<p class="empty">Scrapping this yields nothing yet — hit Edit to add salvage materials.</p>';
+  const rows = y.map(s => `<tr><td>${itemLink(s.id)}</td><td class="q">${s.qty}</td></tr>`).join("");
+  return `<div class="rcard"><table class="rin">${rows}</table></div>`;
+}
+
+function scrapForm() {
+  const d = draft;
+  const rows = d.rows.map((s, idx) => `
+    <div class="ingrow">
+      <select data-dfield="rows.${idx}.id">${itemOptions(s.id)}</select>
+      <input class="qtyin" type="number" min="1" value="${s.qty}" data-dfield="rows.${idx}.qty" aria-label="quantity">
+      <button class="btn mini danger" data-action="del-scraprow" data-idx="${idx}">×</button>
+    </div>`).join("");
+  return `<div class="editform">
+    <div class="formtitle">Scraps into — the materials you get back</div>
+    <div class="ingrows">${rows || '<p class="empty">No yield rows — add one.</p>'}</div>
+    <button class="btn mini" data-action="add-scraprow">+ material</button>
+    <div class="formactions">
+      <button class="btn primary" data-action="save-scrap">Save</button>
+      <button class="btn" data-action="cancel-edit">Cancel</button>
+    </div>
+  </div>`;
+}
+
+function scrapSummary(it) {
+  const y = it.scrapYield || [];
+  if (!y.length) return '<span style="color:var(--ink-faint)">—</span>';
+  return y.map(s => `${esc(byId.get(s.id)?.name || s.id)}${s.qty > 1 ? " ×" + s.qty : ""}`).join(", ");
+}
+
+/* ---------- pages ---------- */
+function renderItem(id) {
+  const it = byId.get(id);
+  if (!it) return `<p class="empty">No item with id <code>${esc(id)}</code>.</p>`;
+  const mb = madeBy.get(id) || [], ui = usedIn.get(id) || [];
+  const newRecipeForm = draft && draft.kind === "recipe" && !draft.editId && draft.out === id ? recipeForm() : "";
+  return `
+    <div class="crumb"><a href="#cat/${esc(it.cat)}">${esc(CAT_LABELS[it.cat] || it.cat)}</a></div>
+    <h2 class="pagetitle"><span id="ititle">${esc(it.name)}</span>
+      <span class="badges"><span id="istatus">${statusChip(it, "item")}</span></span>
+    </h2>
+    <div class="idline"><span class="id">${esc(it.id)}</span></div>
+    ${propsPanel(it)}
+    <section class="linkblock"><h3>Scraps into <span class="autonote">what you get back when you scrap it</span><span class="grow"></span>
+      ${draft && draft.kind === "scrap" && draft.itemId === id ? "" : `<button class="btn mini" data-action="edit-scrap">Edit</button>`}</h3>
+      ${scrapSection(it)}</section>
+    ${EQUIP_CATS.has(it.cat) ? `<section class="linkblock"><h3>Combat & gear stats <span class="grow"></span>
+      ${draft && draft.kind === "stats" && draft.itemId === id ? "" : `<button class="btn mini" data-action="edit-stats">Edit</button>`}</h3>
+      ${equipStatsSection(it)}</section>` : ""}
+    ${it.cat === "workstation" ? `<section class="linkblock"><h3>Recipes crafted here <span class="autonote">assign a recipe to this station from any item's recipe editor</span></h3>
+      ${(() => { const here = recipes.filter(r => r.station === id); return here.length ? here.map(r => recipeCard(r, true)).join("") : '<p class="empty">No recipes assigned to this station yet.</p>'; })()}</section>` : ""}
+    <section class="linkblock"><h3>Made by <span class="grow"></span>
+      ${newRecipeForm ? "" : `<button class="btn mini" data-action="add-recipe">+ Add recipe</button>`}</h3>
+      ${newRecipeForm}
+      ${mb.length ? mb.map(r => recipeCard(r, true)).join("") : (newRecipeForm ? "" : '<p class="empty">No recipe makes this — harvested, looted, or waiting on a recipe.</p>')}</section>
+    <section class="linkblock"><h3>Used in <span class="autonote">auto-filled from recipes — not editable</span></h3>
+      ${ui.length ? ui.map(r => recipeCard(r, false)).join("") : '<p class="empty">Nothing uses this yet. Dead-end items are worth a recipe idea.</p>'}</section>
+    <section class="linkblock"><h3>Distribution — looted from <span class="grow"></span>
+      ${draft && draft.kind === "loot" && draft.itemId === id ? "" : `<button class="btn mini" data-action="edit-loot">Edit</button>`}</h3>
+      ${lootSection(id)}</section>`;
+}
+
+function renderCat(cat) {
+  const list = items.filter(i => i.cat === cat);
+  const creating = draft && draft.kind === "item" && !draft.editId && draft.cat === cat;
+  return `
+    <div class="crumb"><a href="#home">All categories</a></div>
+    <h2 class="pagetitle">${esc(CAT_LABELS[cat] || cat)}
+      <span class="badges">${creating ? "" : `<button class="btn mini" data-action="new-item" data-cat="${esc(cat)}">+ New item</button>`}</span></h2>
+    <p class="lede">${list.length} items · ${list.filter(i => i.live).length} live in the game today</p>
+    ${creating ? itemForm() : ""}
+    <div class="tablewrap"><table class="list">
+      <tr><th>Item</th><th>Tier</th><th class="num">Stack</th><th class="num">Wt</th><th class="num">Scrap</th><th>Scraps into</th><th>Status</th><th>Notes</th></tr>
+      ${list.map(i => `<tr>
+        <td><a href="#item/${esc(i.id)}">${esc(i.name)}</a></td>
+        <td>${i.tier}</td><td class="num">${i.stack}</td><td class="num">${i.weight}</td><td class="num">${i.scrap}</td>
+        <td style="font-size:12.5px">${scrapSummary(i)}</td>
+        <td>${statusChip(i, "item")}</td>
+        <td style="color:var(--ink-faint);font-size:12.5px">${esc(i.notes)}</td></tr>`).join("")}
+    </table></div>`;
+}
+
+function renderStation(stn) {
+  const list = recipes.filter(r => r.station === stn);
+  return `
+    <div class="crumb"><a href="#home">Stations</a></div>
+    <h2 class="pagetitle">${esc(stn)}</h2>
+    <p class="lede">${list.length} recipes crafted here.</p>
+    <section class="linkblock">${list.map(r => recipeCard(r, true)).join("")}</section>`;
+}
+
+function ideaCard(i) {
+  return `<div class="ideacard">
+    <div class="idearow">
+      <input class="ideaname" data-idea="${esc(i.id)}" data-field="name" value="${esc(i.name)}" placeholder="Variant name (e.g. Screamer)">
+      <button class="btn mini danger" data-action="del-idea" data-id="${esc(i.id)}">Delete</button>
+    </div>
+    <textarea class="ideanotes" data-idea="${esc(i.id)}" data-field="notes" rows="3"
+      placeholder="What makes it different? Behavior, look, how it messes with the player…">${esc(i.notes)}</textarea>
+  </div>`;
+}
+
+function renderIdeas() {
+  return `
+    <div class="crumb"><a href="#home">All categories</a></div>
+    <h2 class="pagetitle">Zombie Variant Ideas
+      <span class="badges"><button class="btn mini" data-action="new-idea">+ New idea</button></span></h2>
+    <p class="lede">A scratchpad for horde concepts — drop a name and a few notes. No stats, no rules, just ideas.
+    Typing auto-saves to your browser; hit <em>Export changes</em> and send it back so the ideas land with everyone else's.</p>
+    ${ideas.length ? ideas.map(ideaCard).join("") : '<p class="empty">No ideas yet. Hit “+ New idea” and describe a zombie.</p>'}`;
+}
+
+function renderHome() {
+  const liveN = items.filter(i => i.live).length;
+  const deadEnds = items.filter(i => !usedIn.get(i.id) && !madeBy.get(i.id) && !lootedFrom.get(i.id)).length;
+  return `
+    <div class="statgrid" style="margin-top:4px">
+      ${statCell("Items", items.length)}${statCell("Live today", liveN)}
+      ${statCell("Recipes", recipes.length)}${statCell("Stations", stations.length)}
+      ${statCell("Unconnected items", deadEnds)}${statCell("Your edits", editCount())}
+    </div>
+    <div class="homegrid">
+      ${CAT_ORDER.filter(c => items.some(i => i.cat === c)).map(c => {
+        const n = items.filter(i => i.cat === c);
+        return `<a class="homecard" href="#cat/${c}"><div class="cn">${CAT_LABELS[c]}</div>
+          <div class="cd">${n.length} items · ${n.filter(i => i.live).length} live</div></a>`;
+      }).join("")}
+      <a class="homecard" href="#ideas"><div class="cn">Zombie Ideas</div>
+        <div class="cd">${ideas.length} variant idea${ideas.length === 1 ? "" : "s"} · post your own</div></a>
+    </div>`;
+}
+
+/* ---------- nav ---------- */
+const navOpen = new Set();
+function buildNav(filter) {
+  const q = (filter || "").trim().toLowerCase();
+  const match = i => !q || i.name.toLowerCase().includes(q) || i.id.includes(q) || i.cat.includes(q);
+  let html = "";
+  for (const cat of CAT_ORDER) {
+    const list = items.filter(i => i.cat === cat && match(i));
+    if (!list.length) continue;
+    const open = q ? true : navOpen.has(cat);
+    html += `<div class="navgroup">
+      <button data-cat="${cat}">${CAT_LABELS[cat]} <span class="n">${list.length}</span></button>
+      ${open ? `<ul class="navlist">${list.map(i =>
+        `<li><a href="#item/${esc(i.id)}" data-id="${esc(i.id)}">${i.live ? '<span class="dotlive" title="live in build"></span>' : ""}${esc(i.name)}</a></li>`).join("")}</ul>` : ""}
+    </div>`;
+  }
+  // Idea board — not an item category, pinned at the bottom of the nav.
+  if (!q || "zombie variant ideas".includes(q)) {
+    html += `<a class="navspecial" href="#ideas">Zombie Ideas <span class="n">${ideas.length}</span></a>`;
+  }
+  document.getElementById("navtree").innerHTML = html || '<p class="empty" style="padding:6px">No matches.</p>';
+}
+
+/* ---------- actions ---------- */
+function slugify(name) { return name.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, ""); }
+function uniqueId(base) {
+  let id = base, n = 2;
+  while (byId.has(id) || recipeById.has(id)) id = base + "_" + n++;
+  return id;
+}
+function currentItemId() { return (location.hash.slice(1).split("/"))[1]; }
+// Lazily promote an item into the edit set as a full copy, so inline property
+// tweaks and scrap-table edits both merge into one override object per item.
+function ensureItemEdit(id) {
+  if (!EDITS.items[id]) {
+    const it = byId.get(id);
+    EDITS.items[id] = { ...it, scrapYield: (it.scrapYield || []).map(s => ({ ...s })) };
+  }
+  return EDITS.items[id];
+}
+function ensureIdeaEdit(id) {
+  if (!EDITS.ideas[id]) {
+    const found = ideas.find(i => i.id === id) || { id, name: "", notes: "" };
+    EDITS.ideas[id] = { ...found };
+  }
+  return EDITS.ideas[id];
+}
+function uniqueIdeaId() {
+  const seen = new Set([...(DATA.ideas || []).map(i => i.id), ...Object.keys(EDITS.ideas)]);
+  let n = 1, id;
+  do { id = "idea_" + n++; } while (seen.has(id));
+  return id;
+}
+
+const actions = {
+  "new-idea"() {
+    const id = uniqueIdeaId();
+    EDITS.ideas[id] = { id, name: "", notes: "" };
+    persist(); rebuild(); route();
+    const el = document.querySelector(`[data-idea="${id}"][data-field="name"]`);
+    if (el) el.focus();
+  },
+  "del-idea"(el) {
+    const id = el.dataset.id;
+    if (!confirm("Delete this idea?")) return;
+    delete EDITS.ideas[id];
+    if ((DATA.ideas || []).some(i => i.id === id) && !EDITS.deletedIdeas.includes(id)) EDITS.deletedIdeas.push(id);
+    persist(); rebuild(); route();
+  },
+  "new-item"(el) {
+    draft = { kind: "item", editId: null, cat: el.dataset.cat, name: "", tier: 0, stack: 100,
+      weight: 1, scrap: 0, food: 0, water: 0, health: 0, notes: "", asset: "" };
+  },
+  "save-item"() {
+    const d = draft;
+    if (!d.name.trim()) { alert("Name it first."); return; }
+    const id = d.editId || uniqueId(CAT_PREFIX[d.cat] + slugify(d.name));
+    const prev = byId.get(id);
+    EDITS.items[id] = { id, name: d.name.trim(), cat: d.cat, tier: num(d.tier), stack: num(d.stack) || 1,
+      weight: num(d.weight), scrap: num(d.scrap), food: num(d.food), water: num(d.water), health: num(d.health),
+      live: prev ? prev.live : false, notes: d.notes, asset: (d.asset || "").trim(),
+      scrapYield: prev ? (prev.scrapYield || []) : [] };
+    draft = null; persist(); rebuild(); buildNav(searchBox.value);
+    if (!location.hash.includes("#item/" + id)) location.hash = "#item/" + id; else route();
+  },
+  "edit-scrap"() {
+    const id = currentItemId();
+    const y = (byId.get(id).scrapYield || []).map(s => ({ id: s.id, qty: s.qty }));
+    draft = { kind: "scrap", itemId: id, rows: y.length ? y : [{ id: "resource_scrap_iron", qty: 1 }] };
+  },
+  "add-scraprow"() { draft.rows.push({ id: "resource_scrap_iron", qty: 1 }); route(); },
+  "del-scraprow"(el) { draft.rows.splice(+el.dataset.idx, 1); route(); },
+  "save-scrap"() {
+    const it = ensureItemEdit(draft.itemId);
+    it.scrapYield = draft.rows.map(s => ({ id: s.id, qty: Math.max(1, num(s.qty)) })).filter(s => s.id);
+    draft = null; persist(); rebuild(); route();
+  },
+  "edit-stats"() {
+    const id = currentItemId();
+    const s = statsById.get(id) || { dmg: 0, apm: 0, dur: 0, armor: 0, harvest: 0, notes: "" };
+    draft = { kind: "stats", itemId: id, dmg: s.dmg, apm: s.apm, dur: s.dur, armor: s.armor, harvest: s.harvest, notes: s.notes || "" };
+  },
+  "save-stats"() {
+    const d = draft;
+    EDITS.stats[d.itemId] = { id: d.itemId, dmg: num(d.dmg), apm: num(d.apm), dur: num(d.dur),
+      armor: num(d.armor), harvest: num(d.harvest), notes: d.notes };
+    draft = null; persist(); rebuild(); route();
+  },
+  "add-recipe"() {
+    const id = currentItemId();
+    const it = byId.get(id);
+    draft = { kind: "recipe", editId: null, out: id, name: it ? it.name : id, station: "", secs: 3,
+      outQty: 1, inputs: [{ id: "resource_wood", qty: 1 }], notes: "" };
+  },
+  "edit-recipe"(el) {
+    const r = recipeById.get(el.dataset.rid);
+    draft = { kind: "recipe", editId: r.id, out: r.out, name: r.name, station: r.station, secs: r.secs,
+      outQty: r.outQty || 1, inputs: r.inputs.map(i => ({ ...i })), notes: r.notes, places: r.places };
+  },
+  "add-ing"() { draft.inputs.push({ id: "resource_wood", qty: 1 }); route(); },
+  "del-ing"(el) { draft.inputs.splice(+el.dataset.idx, 1); route(); },
+  "save-recipe"() {
+    const d = draft;
+    const inputs = d.inputs.map(i => ({ id: i.id, qty: Math.max(1, num(i.qty)) })).filter(i => i.id);
+    if (!inputs.length) { alert("A recipe needs at least one ingredient."); return; }
+    const id = d.editId || uniqueId(slugify(d.name || d.out));
+    const prev = recipeById.get(id);
+    EDITS.recipes[id] = { id, name: d.name.trim() || id, station: d.station, secs: Math.max(1, num(d.secs)),
+      inputs, out: d.places ? "" : d.out, outQty: Math.max(1, num(d.outQty)), places: d.places || "",
+      live: prev ? prev.live : false, notes: d.notes };
+    EDITS.deletedRecipes = EDITS.deletedRecipes.filter(x => x !== id);
+    draft = null; persist(); rebuild(); route();
+  },
+  "del-recipe"() {
+    const id = draft.editId;
+    if (!confirm("Delete this recipe?")) return;
+    delete EDITS.recipes[id];
+    if (DATA.recipes.some(r => r.id === id) && !EDITS.deletedRecipes.includes(id)) EDITS.deletedRecipes.push(id);
+    draft = null; persist(); rebuild(); route();
+  },
+  "edit-loot"() {
+    const id = currentItemId();
+    const rows = (lootedFrom.get(id) || []).map(l => ({ table: l.table, weight: l.weight, min: l.min, max: l.max, gs: l.gs }));
+    draft = { kind: "loot", itemId: id, rows: rows.length ? rows : [{ table: containers[0] || "crate_household", weight: 1, min: 1, max: 1, gs: 0 }] };
+  },
+  "add-lootrow"() { draft.rows.push({ table: containers[0] || "crate_household", weight: 1, min: 1, max: 1, gs: 0 }); route(); },
+  "del-lootrow"(el) { draft.rows.splice(+el.dataset.idx, 1); route(); },
+  "save-loot"() {
+    const d = draft;
+    EDITS.loot[d.itemId] = d.rows
+      .map(r => ({ table: String(r.table).trim(), weight: Math.max(1, num(r.weight)), min: Math.max(0, num(r.min)),
+        max: Math.max(0, num(r.max)), gs: Math.max(0, num(r.gs)), live: false }))
+      .filter(r => r.table);
+    draft = null; persist(); rebuild(); route();
+  },
+  "cancel-edit"() { draft = null; route(); }
+};
+
+const OPENS_FORM = ["new-item", "edit-stats", "add-recipe", "edit-recipe", "edit-loot", "edit-scrap"];
+document.getElementById("page").addEventListener("click", e => {
+  const el = e.target.closest("[data-action]");
+  if (!el) return;
+  const fn = actions[el.dataset.action];
+  if (fn) { fn(el); if (OPENS_FORM.includes(el.dataset.action)) route(); }
+});
+document.getElementById("page").addEventListener("input", e => {
+  const f = e.target.dataset.dfield;
+  if (f && draft) setDraftField(f, e.target.value);
+});
+const NUM_PROPS = new Set(["tier", "stack", "weight", "scrap", "food", "water", "health"]);
+function applyInlineProp(prop, value) {
+  const id = currentItemId();
+  if (!id) return;
+  const it = ensureItemEdit(id);
+  if (prop === "name") it.name = value.trim() || (byId.get(id)?.name || id);
+  else if (prop === "asset") it.asset = value.trim();
+  else if (NUM_PROPS.has(prop)) it[prop] = num(value);
+  else it[prop] = value;
+  persist(); rebuild(); buildNav(searchBox.value);
+  // Focus-safe surgical updates — no full re-render, so tabbing between fields survives.
+  const t = document.getElementById("ititle"); if (t && prop === "name") t.textContent = byId.get(id).name;
+  const s = document.getElementById("istatus"); if (s) s.innerHTML = statusChip(byId.get(id), "item");
+}
+function applyIdeaField(id, field, value) {
+  const idea = ensureIdeaEdit(id);
+  idea[field] = value;
+  persist(); rebuild(); buildNav(searchBox.value); // focus-safe: no full re-render
+}
+document.getElementById("page").addEventListener("change", e => {
+  if (e.target.dataset.prop) { applyInlineProp(e.target.dataset.prop, e.target.value); return; }
+  if (e.target.dataset.idea) { applyIdeaField(e.target.dataset.idea, e.target.dataset.field, e.target.value); return; }
+  const f = e.target.dataset.dfield;
+  if (f && draft) setDraftField(f, e.target.value);
+});
+
+/* ---------- export / discard ---------- */
+document.getElementById("exportbtn").addEventListener("click", () => {
+  const payload = { schema: "malady-design-edits/1", exported: new Date().toISOString(),
+    baseGenerated: DATA.generated, edits: EDITS };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "malady-design-edits.json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+document.getElementById("discardbtn").addEventListener("click", () => {
+  if (!confirm("Throw away ALL local edits? (Anything already exported is safe.)")) return;
+  EDITS = { items: {}, recipes: {}, deletedRecipes: [], stats: {}, loot: {}, ideas: {}, deletedIdeas: [] };
+  draft = null; persist(); rebuild(); buildNav(searchBox.value); route();
+});
+
+function refreshHead() {
+  const n = editCount();
+  const chip = document.getElementById("editchip");
+  chip.hidden = !n; chip.textContent = n + (n === 1 ? " edit" : " edits");
+  document.getElementById("exportbtn").hidden = !n;
+  document.getElementById("discardbtn").hidden = !n;
+}
+
+/* ---------- routing ---------- */
+document.getElementById("navtree").addEventListener("click", e => {
+  const b = e.target.closest("button[data-cat]");
+  if (!b) return;
+  const c = b.dataset.cat;
+  navOpen.has(c) ? navOpen.delete(c) : navOpen.add(c);
+  buildNav(searchBox.value);
+});
+const searchBox = document.getElementById("search");
+searchBox.addEventListener("input", e => buildNav(e.target.value));
+
+function route() {
+  const h = location.hash.slice(1) || "home";
+  const page = document.getElementById("page");
+  const [view, arg] = h.split("/");
+  if (view === "item") { page.innerHTML = renderItem(arg); const it = byId.get(arg); if (it && !navOpen.has(it.cat)) { navOpen.add(it.cat); buildNav(searchBox.value); } }
+  else if (view === "cat") page.innerHTML = renderCat(arg);
+  else if (view === "station") page.innerHTML = renderStation(arg);
+  else if (view === "ideas") page.innerHTML = renderIdeas();
+  else page.innerHTML = renderHome();
+  document.querySelectorAll(".navlist a").forEach(a => a.classList.toggle("active", a.dataset.id === arg && view === "item"));
+}
+const navToggleBtn = document.getElementById("navtoggle");
+function setNavOpen(open) {
+  document.body.classList.toggle("nav-open", open);
+  navToggleBtn.setAttribute("aria-expanded", open ? "true" : "false");
+  navToggleBtn.textContent = open ? "✕ Close" : "☰ Items";
+  window.scrollTo(0, 0); // top of the single page scroll when switching "tabs"
+}
+window.addEventListener("hashchange", () => {
+  draft = null; route();
+  document.querySelector("main").scrollTop = 0; // desktop: main is the scroll container
+  setNavOpen(false); // mobile: switch back to the content "tab" and scroll to top
+});
+navToggleBtn.addEventListener("click", () => setNavOpen(!document.body.classList.contains("nav-open")));
+
+document.getElementById("counts").textContent =
+  `${DATA.items.length} items · ${DATA.recipes.length} recipes · generated ${DATA.generated}`;
+rebuild();
+refreshHead();
+buildNav("");
+route();
+</script>
+
